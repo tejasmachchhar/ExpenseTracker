@@ -6,9 +6,6 @@ export const Login = () => {
       <div style={{width: '100%', color: 'red'}}>Okk
         <br style={{color: 'red', width: '100%'}} />
       </div>
-      <br />
-      <br />
-      <br />
     </div>
   )
 }
