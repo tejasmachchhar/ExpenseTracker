@@ -10,20 +10,21 @@ import { UserNavbar } from './components/layouts/UserNavbar'
 import { UserDashboard } from './components/user/UserDashboard'
 import { Login } from './components/common/Login'
 import { Signup } from './components/common/Signup'
+import { User } from './components/layouts/User'
 
 function App() {
   return (
-    <div className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
+    <body className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
       <div className="app-wrapper">
         <Routes>
           <Route path='/login' element = {<Login/>}></Route>
           <Route path='/signup' element = {<Signup/>}></Route>
-          <Route path="/user" element={<UserSidebar/>}>
+          <Route path="/user" element={<User/>}>
             <Route path='dashboard' element={<UserDashboard/>}></Route>
           </Route>
         </Routes>
       </div>
-    </div>
+    </body>
   )
 }
 
