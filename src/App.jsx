@@ -14,7 +14,7 @@ import { User } from './components/layouts/User'
 
 function App() {
   return (
-    <body className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
+    <div className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
       <div className="app-wrapper">
         <Routes>
           <Route path='/login' element = {<Login/>}></Route>
@@ -24,7 +24,7 @@ function App() {
           </Route>
         </Routes>
       </div>
-    </body>
+    </div>
   )
 }
 
