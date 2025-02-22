@@ -1,11 +1,8 @@
 import React from 'react'
-import { UserNavbar } from './UserNavbar'
-import { Outlet } from 'react-router-dom'
 
 export const UserSidebar = () => {
   return (
     <>
-      <UserNavbar></UserNavbar>
       <aside className="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         {/*begin::Sidebar Brand*/}
         <div className="sidebar-brand">
@@ -14,12 +11,12 @@ export const UserSidebar = () => {
             {/*begin::Brand Image*/}
             <img
               src="../../dist/assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
+              alt="User Logo"
               className="brand-image opacity-75 shadow"
             />
             {/*end::Brand Image*/}
             {/*begin::Brand Text*/}
-            <span className="brand-text fw-light">AdminLTE 4</span>
+            <span className="brand-text fw-light">User</span>
             {/*end::Brand Text*/}
           </a>
           {/*end::Brand Link*/}
@@ -29,7 +26,7 @@ export const UserSidebar = () => {
             <div className="os-size-observer-listener" />
           </div>
           <div
-            className=""
+            // className="" 
             data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll"
             tabIndex={-1}
             style={{
@@ -473,18 +470,23 @@ export const UserSidebar = () => {
               {/*end::Sidebar Menu*/}
             </nav>
           </div>
-          {/* <div class="os-scrollbar os-scrollbar-vertical os-theme-light os-scrollbar-auto-hide os-scrollbar-handle-interactive os-scrollbar-track-interactive os-scrollbar-visible os-scrollbar-cornerless os-scrollbar-auto-hide-hidden" 
-            style="--os-viewport-percent: 0.1787; --os-scroll-direction: 0;">
+          <div className="os-scrollbar os-scrollbar-horizontal os-theme-light os-scrollbar-auto-hide os-scrollbar-handle-interactive os-scrollbar-track-interactive os-scrollbar-cornerless os-scrollbar-unusable os-scrollbar-auto-hide-hidden"
+            style={{ "--os-viewport-percent": "1", "--os-scroll-direction": "0"}}>
+            <div className="os-scrollbar-track">
+              <div className="os-scrollbar-handle">
+              </div>
+            </div>
+          </div>
+
+          <div className="os-scrollbar os-scrollbar-vertical os-theme-light os-scrollbar-auto-hide os-scrollbar-handle-interactive os-scrollbar-track-interactive os-scrollbar-visible os-scrollbar-cornerless os-scrollbar-auto-hide-hidden"
+            style={{ "--os-viewport-percent": "0.1787", "--os-scroll-direction": "0" }}>
             <div className="os-scrollbar-track">
               <div className="os-scrollbar-handle" />
             </div>
-          </div> */}
+          </div>
 
         </div>
       </aside>
-      <main className="app-main">
-        <Outlet></Outlet>
-      </main>
     </>
   )
 }
