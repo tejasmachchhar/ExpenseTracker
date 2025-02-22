@@ -11,7 +11,6 @@ export const User = () => {
         <main className="app-main">
             <Outlet></Outlet>
         </main>
-
     </>
   )
 }
