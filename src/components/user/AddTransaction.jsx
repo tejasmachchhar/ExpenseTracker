@@ -21,13 +21,13 @@ export const AddTransaction = () => {
                                     className="form-check-input"
                                     type="radio"
                                     name="transactionCategory"
-                                    id="expanse"
-                                    defaultValue="expanse"
+                                    id="expense"
+                                    defaultValue="expense"
                                     defaultChecked="true"
                                 />
                                 <label className="form-check-label" htmlFor="gridRadios1">
                                     {" "}
-                                    Expanse{" "}
+                                    Expense{" "}
                                 </label>
                             </div>
                             <div className="form-check">
@@ -83,7 +83,7 @@ export const AddTransaction = () => {
                             </div>
                         </div>
 
-                        <div>
+                        <div className='form-group'>
                             <label htmlFor="party" className='form-label'>
                                 Party Name
                             </label>

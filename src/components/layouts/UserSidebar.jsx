@@ -11,12 +11,12 @@ export const UserSidebar = () => {
             {/*begin::Brand Image*/}
             <img
               src="../../dist/assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
+              alt="User Logo"
               className="brand-image opacity-75 shadow"
             />
             {/*end::Brand Image*/}
             {/*begin::Brand Text*/}
-            <span className="brand-text fw-light">AdminLTE 4</span>
+            <span className="brand-text fw-light">User</span>
             {/*end::Brand Text*/}
           </a>
           {/*end::Brand Link*/}
