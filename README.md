@@ -6,7 +6,7 @@ The Expense Tracker is a user-friendly digital solution for managing personal fi
 
 This project addresses common challenges like overspending, difficulty in tracking expenses, and lack of financial awareness. By providing insights into spending habits, it empowers users to make informed financial decisions.
 
-Project Details
+# Project Details
 
 - Objective
 
@@ -90,6 +90,4 @@ Future Enhancements
 
 ● Gamification elements to encourage consistent usage.
 
-- The Expense Tracker is designed to be an intuitive and practical tool for managing personal finances, empowering users to take control of their money and plan for a financially secure
-
-future.
+- The Expense Tracker is designed to be an intuitive and practical tool for managing personal finances, empowering users to take control of their money and plan for a financially secure future.
