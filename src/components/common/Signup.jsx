@@ -1,9 +1,26 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export const Signup = () => {
   return (
-    <div>
-      <div className="card card-info card-outline mb-4">
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <div className="card card-info card-outline mb-4"
+        style={{
+          height: "100vh",
+          width: "75%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
         {/*begin::Header*/}
         <div className="card-header">
           <div className="card-title">Form Validation</div>
@@ -135,6 +152,12 @@ export const Signup = () => {
             <button className="btn btn-info" type="submit">
               Submit form
             </button>
+            <Link to="/login" data-discover="true">
+              <button className="btn btn-primary" style={{ float: "right" }}>
+                Login
+              </button>
+            </Link>
+
           </div>
           {/*end::Footer*/}
         </form>
