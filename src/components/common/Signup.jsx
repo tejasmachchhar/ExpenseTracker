@@ -1,16 +1,43 @@
+import axios from 'axios';
 import React from 'react'
+import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
+import { toast, ToastContainer } from 'react-toastify';
 
 export const Signup = () => {
+  const { register, handleSubmit } = useForm();
+  const submitHandler = async (data) => {
+    data.roleId = "67c138b76acafdcf94ed4b2b";
+    const res = await axios.post('/user', data);
+    toast(res.data.message);
+    console.log(res.data);
+  }
+
   return (
-    <div>
-      <div className="card card-info card-outline mb-4">
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <div className="card card-info card-outline mb-4"
+        style={{
+          width: "75vw"
+        }}
+      >
+        <ToastContainer></ToastContainer>
         {/*begin::Header*/}
         <div className="card-header">
-          <div className="card-title">Form Validation</div>
+          <div className="card-title">Sign Up</div>
         </div>
         {/*end::Header*/}
         {/*begin::Form*/}
-        <form className="needs-validation" noValidate="">
+        <form className="needs-validation" noValidate=""
+          onSubmit={handleSubmit(submitHandler)}
+        >
           {/*begin::Body*/}
           <div className="card-body">
             {/*begin::Row*/}
@@ -25,7 +52,8 @@ export const Signup = () => {
                   className="form-control"
                   id="validationCustom01"
                   defaultValue="Mark"
-                  required=""
+                  required={true}
+                  {...register('firstName')}
                 />
                 <div className="valid-feedback">Looks good!</div>
               </div>
@@ -41,6 +69,7 @@ export const Signup = () => {
                   id="validationCustom02"
                   defaultValue="Otto"
                   required=""
+                  {...register('lastName')}
                 />
                 <div className="valid-feedback">Looks good!</div>
               </div>
@@ -59,52 +88,46 @@ export const Signup = () => {
                     className="form-control"
                     id="validationCustomUsername"
                     aria-describedby="inputGroupPrepend"
-                    required=""
-                  />
+                    required={true}
+                    {...register('username')}
+                    />
                   <div className="invalid-feedback">Please choose a username.</div>
                 </div>
               </div>
               {/*end::Col*/}
               {/*begin::Col*/}
               <div className="col-md-6">
-                <label htmlFor="validationCustom03" className="form-label">
-                  City
+                <label htmlFor="exampleInputPassword1" className="form-label">
+                  Password
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   className="form-control"
-                  id="validationCustom03"
-                  required=""
+                  id="exampleInputPassword1"
+                  name="password"
+                  required={true}
+                  {...register('password')}
                 />
                 <div className="invalid-feedback">Please provide a valid city.</div>
               </div>
               {/*end::Col*/}
               {/*begin::Col*/}
-              <div className="col-md-6">
-                <label htmlFor="validationCustom04" className="form-label">
-                  State
-                </label>
-                <select className="form-select" id="validationCustom04" required="">
-                  <option selected="" disabled="" value="">
-                    Choose...
-                  </option>
-                  <option>...</option>
-                </select>
-                <div className="invalid-feedback">Please select a valid state.</div>
-              </div>
-              {/*end::Col*/}
-              {/*begin::Col*/}
-              <div className="col-md-6">
-                <label htmlFor="validationCustom05" className="form-label">
-                  Zip
+              <div className="mb-3">
+                <label htmlFor="exampleInputEmail1" className="form-label">
+                  Email address
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   className="form-control"
-                  id="validationCustom05"
-                  required=""
+                  id="exampleInputEmail1"
+                  aria-describedby="emailHelp"
+                  name="email"
+                  required={true}
+                  {...register('email')}
                 />
-                <div className="invalid-feedback">Please provide a valid zip.</div>
+                <div id="emailHelp" className="form-text">
+                  We'll never share your email with anyone else.
+                </div>
               </div>
               {/*end::Col*/}
               {/*begin::Col*/}
@@ -115,7 +138,7 @@ export const Signup = () => {
                     type="checkbox"
                     defaultValue=""
                     id="invalidCheck"
-                    required=""
+                    required={true}
                   />
                   <label className="form-check-label" htmlFor="invalidCheck">
                     Agree to terms and conditions
@@ -133,8 +156,14 @@ export const Signup = () => {
           {/*begin::Footer*/}
           <div className="card-footer">
             <button className="btn btn-info" type="submit">
-              Submit form
+              Sign Up
             </button>
+            <Link to="/login" data-discover="true">
+              <button className="btn btn-primary" style={{ float: "right" }}>
+                Login
+              </button>
+            </Link>
+
           </div>
           {/*end::Footer*/}
         </form>

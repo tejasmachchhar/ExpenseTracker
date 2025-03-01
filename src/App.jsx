@@ -12,8 +12,12 @@ import { Login } from './components/common/Login'
 import { Signup } from './components/common/Signup'
 import { User } from './components/layouts/User'
 import { AddTransaction } from './components/user/AddTransaction'
+import axios from 'axios'
 
 function App() {
+
+  axios.defaults.baseURL = "http://localhost:3000";
+
   return (
     <div className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded">
       <div className="app-wrapper">
