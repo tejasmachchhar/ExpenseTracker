@@ -49,6 +49,7 @@ export const Login = () => {
                   id="exampleInputEmail1"
                   aria-describedby="emailHelp"
                   name="email"
+                  required={true}
                   {...register('email')}
                 />
                 <div id="emailHelp" className="form-text">
@@ -64,6 +65,7 @@ export const Login = () => {
                   className="form-control"
                   id="exampleInputPassword1"
                   name="password"
+                  required={true}
                   {...register('password')}
                 />
               </div>
