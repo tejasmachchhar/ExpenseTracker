@@ -1,5 +1,5 @@
 # React + Vite Project 
-# Expanse Tracker 
+# Expense Tracker 
 
 - Abstract:
 
