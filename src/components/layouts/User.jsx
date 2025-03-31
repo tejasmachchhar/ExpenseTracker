@@ -5,12 +5,15 @@ import { Outlet } from 'react-router-dom'
 
 export const User = () => {
   return (
-    <>
-        <UserNavbar></UserNavbar>
-        <UserSidebar></UserSidebar>
-        <main className="app-main">
+    <div 
+    >
+        {/* <UserNavbar></UserNavbar> */}
+        <UserSidebar
+        ></UserSidebar>
+        <main 
+        >
             <Outlet></Outlet>
         </main>
-    </>
+    </div>
   )
 }
