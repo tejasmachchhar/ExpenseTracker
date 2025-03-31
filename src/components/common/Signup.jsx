@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
-
 export const Signup = () => {
   const { register, handleSubmit } = useForm();
   const submitHandler = async (data) => {
