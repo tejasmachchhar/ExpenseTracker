@@ -7,23 +7,34 @@ import { ToastContainer, toast } from 'react-toastify';
 
 export const Login = () => {
   const { register, handleSubmit } = useForm();
-  let submitHandler
-  try {
-    submitHandler = async (data) => {
+  // let submitHandler
+  // try {
+  const submitHandler = async (data) => {
+    try {
       const res = await axios.post("/user/login", data);
+      localStorage.setItem("id", res.data.data._id);
+      localStorage.setItem("role", res.data.data.roleId.role);
       toast(res.data.message);
       console.log(res);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage = err.response?.data?.message || err.message || "Something went wrong";
+        toast.error(errorMessage);
+        return;
+      } else {
+        const errorMessage = err.response.data.message || err.message || "Something went wrong";
+        toast.error(errorMessage);
+      }
     }
-  }catch(err){
-    toast(err);
   }
 
   return (
     <div style={{
-      height:"100vh", width:"100vw", 
-      display:"flex", justifyContent:"center", 
-      alignItems:"center"}}>
-      <div><ToastContainer/></div>
+      height: "100vh", width: "100vw",
+      display: "flex", justifyContent: "center",
+      alignItems: "center"
+    }}>
+      <div><ToastContainer /></div>
       <div className="card card-primary card-outline mb-4">
         {/*begin::Header*/}
         <div className="card-header">
@@ -75,10 +86,10 @@ export const Login = () => {
           {/*begin::Footer*/}
           <div className="card-footer">
             <button type="submit" className="btn btn-primary">
-              Submit
+              Login
             </button>
             <Link to="/signup">
-              <button className="btn btn-primary" style={{float:"right"}}>
+              <button className="btn btn-primary" style={{ float: "right" }}>
                 SignUp
               </button>
             </Link>
