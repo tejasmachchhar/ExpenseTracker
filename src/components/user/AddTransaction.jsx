@@ -20,8 +20,15 @@ export const AddTransaction = () => {
         data.userId = "680674362d4e96690b0cebd1";
         console.log("Data: "+data);
         // Handle form submission logic here
-        const res = await axios.post('/expense', data);
-        console.log("Res: "+res);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.post('/expense', data, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            console.log('Transaction added:', res.data);
+        } catch (error) {
+            console.error('Error adding transaction:', error);
+        }
     }
 
     return (

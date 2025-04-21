@@ -6,8 +6,11 @@ export const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
     const fetchTransactions = async () => {
         try {
+            const token = localStorage.getItem('token');
             console.log('Fetching transactions...');
-            const response = await axios.get('/expenses');
+            const response = await axios.get('/expenses', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setTransactions(response.data);
             console.log('Transactions fetched:', response.data);
         } catch (error) {

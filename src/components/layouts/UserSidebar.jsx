@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export const UserSidebar = () => {
   const [currentTab, setCurrentTab] = useState("dashboard");
+  const navigate = useNavigate();
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -10,9 +11,11 @@ export const UserSidebar = () => {
     return currentTab === tab ? "active" : "";
   }
   const handleLogout = () => {
-    // Handle logout logic here
-    console.log("User logged out");
-  };
+    // Clear user data from local storage or state management
+    localStorage.removeItem("token");
+    // Redirect to login page
+    navigate('/login');
+  }
   return (
     <>
       <div className="nav-menu">
@@ -46,9 +49,9 @@ export const UserSidebar = () => {
             className={isActive("reports")}
             onClick={() => handleTabChange("reports")}
           >
-            <a href="#">
+            <Link to="/user/reports">
               <i>📝</i> <span>Reports</span>
-            </a>
+            </Link>
           </li>
           <li
             className={isActive("categories")}
@@ -74,6 +77,13 @@ export const UserSidebar = () => {
               <i>⚙️</i> <span>Settings</span>
             </a>
           </li>
+          <li
+            className={isActive("logout")}
+            onClick={() => {handleTabChange("logout"); handleLogout();}}
+          >
+              <i>🚪</i> <span>Logout</span>
+          </li>
+
         </ul>
       </div>
     </>

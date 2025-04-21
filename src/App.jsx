@@ -20,6 +20,7 @@ import PrivateRoutes from './assets/hooks/PrivateRoutes'
 import { Dashboard } from './components/layouts/Dashboard'
 import { AddExpenseAI } from './components/user/AddExpenseAI'
 import { Transactions } from './components/layouts/Transactions'
+import { Report } from './components/user/Report';
 
 function App() {
   axios.defaults.baseURL = "http://localhost:3000";
@@ -39,6 +40,7 @@ function App() {
                 <Route path='addtransaction' element={<AddTransaction />}></Route>
                 <Route path='addexpense' element={<AddExpenseAI />}></Route>
                 <Route path='transactions' element={<Transactions/>}></Route>
+                <Route path="/user/reports" element={<Report />} />
               </Route>
               {/* <Route path="/*" element={<User/>}></Route> // This is the default route */}
             </Route>

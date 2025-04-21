@@ -13,8 +13,12 @@ export const Login = () => {
   const submitHandler = async (data) => {
     try {
       const res = await axios.post("/user/login", data);
-      localStorage.setItem("id", res.data.data._id);
-      localStorage.setItem("role", res.data.data.roleId.role);
+      const { token, message } = res.data;
+
+      // Save token to localStorage
+      localStorage.setItem('token', token);
+
+      toast.success(message);
       toast(res.data.message);
       console.log(res);
       navigate("/user/dashboard");
