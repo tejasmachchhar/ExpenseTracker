@@ -1,6 +1,22 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns';
 
 export const Dashboard = () => {
+    const [transactions, setTransactions] = useState([]);
+    const fetchTransactions = async () => {
+        try {
+            console.log('Fetching transactions...');
+            const response = await axios.get('/expenses');
+            setTransactions(response.data);
+            console.log('Transactions fetched:', response.data);
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+        }
+    }
+    useEffect(() => {
+        fetchTransactions();
+    }, []); // Empty dependency array ensures this runs only once when the component mounts
     return (
         <>
             <meta charSet="UTF-8" />
@@ -29,13 +45,6 @@ export const Dashboard = () => {
                                 <p>₹2,840</p>
                             </div>
                             <div className="stat-icon icon-month">M</div>
-                        </div>
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <h3>Pending Approval</h3>
-                                <p>₹580</p>
-                            </div>
-                            <div className="stat-icon icon-pending">P</div>
                         </div>
                         <div className="stat-card">
                             <div className="stat-info">
@@ -119,7 +128,7 @@ export const Dashboard = () => {
                                         <th>Description</th>
                                         <th>Category</th>
                                         <th>Amount</th>
-                                        <th>Status</th>
+                                        {/* <th>Status</th> */}
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -131,9 +140,9 @@ export const Dashboard = () => {
                                             <span className="category-badge badge-food">Food</span>
                                         </td>
                                         <td>₹85.50</td>
-                                        <td>
+                                        {/* <td>
                                             <span className="status-badge status-approved">Approved</span>
-                                        </td>
+                                        </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>
@@ -146,9 +155,9 @@ export const Dashboard = () => {
                                             <span className="category-badge badge-office">Office</span>
                                         </td>
                                         <td>₹123.75</td>
-                                        <td>
+                                        {/* <td>
                                             <span className="status-badge status-approved">Approved</span>
-                                        </td>
+                                        </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>
@@ -161,9 +170,9 @@ export const Dashboard = () => {
                                             <span className="category-badge badge-travel">Travel</span>
                                         </td>
                                         <td>₹425.00</td>
-                                        <td>
+                                        {/* <td>
                                             <span className="status-badge status-pending">Pending</span>
-                                        </td>
+                                        </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>
@@ -176,9 +185,9 @@ export const Dashboard = () => {
                                             <span className="category-badge badge-other">Other</span>
                                         </td>
                                         <td>₹49.99</td>
-                                        <td>
+                                        {/* <td>
                                             <span className="status-badge status-rejected">Rejected</span>
-                                        </td>
+                                        </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>
@@ -191,14 +200,41 @@ export const Dashboard = () => {
                                             <span className="category-badge badge-food">Food</span>
                                         </td>
                                         <td>₹215.30</td>
-                                        <td>
+                                        {/* <td>
                                             <span className="status-badge status-approved">Approved</span>
-                                        </td>
+                                        </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>
                                         </td>
                                     </tr>
+                                    {
+                                    // transactions.length > 0 ?
+                                        transactions?.data?.map((transaction) => {
+                                            return (
+                                                // console.log("Tr: "+ transaction.dateTime),
+                                                <tr key={transaction.id}>
+                                                    <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
+                                                    <td>{transaction.notes}</td>
+                                                    <td>
+                                                        <span className={`category-badge badge-travel`}>{transaction.category}</span>
+                                                    </td>
+                                                    <td>₹{transaction.amountSpent}</td>
+                                                    {/* <td>
+                                                        <span className={`status-badge status-${transaction.status.toLowerCase()}`}>{transaction.status}</span>
+                                                    </td> */}
+                                                    <td className="action-buttons">
+                                                        <button className="action-btn">👁️</button>
+                                                        <button className="action-btn">✏️</button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })                                    
+                                        // :
+                                        // <tr>
+                                        //     <td colSpan="5" style={{ textAlign: 'center' }}>No transactions available</td>
+                                        // </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

@@ -10,6 +10,7 @@ export const User = () => {
         {/* <UserNavbar></UserNavbar> */}
         <UserSidebar
         ></UserSidebar>
+        {/* <UserNavbar></UserNavbar> */}
         <main 
         >
             <Outlet></Outlet>

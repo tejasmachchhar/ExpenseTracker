@@ -3,15 +3,26 @@ import { FormControl, FormControlLabel, FormLabel, Input, Radio, RadioGroup, Swi
 import { fontGrid } from '@mui/material/styles/cssUtils'
 import { DateTimePicker, LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import axios from 'axios'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 export const AddTransaction = () => {
     const [checked, setChecked] = useState(true);
     const [transactionType, setTransactionType] = useState('expense');
 
     const [category, setCategory] = useState("");
-
+    const { register, handleSubmit } = useForm();
+    const submitHandler = async (data) => {
+        data.tranType = transactionType;
+        data.isTransfer = checked;
+        data.userId = "680674362d4e96690b0cebd1";
+        console.log("Data: "+data);
+        // Handle form submission logic here
+        const res = await axios.post('/expense', data);
+        console.log("Res: "+res);
+    }
 
     return (
         <>
@@ -29,7 +40,8 @@ export const AddTransaction = () => {
                         <p>Complete the form below to add a new transaction record. All fields marked with an asterisk (*) are
                             required.</p>
                     </div>
-                    <form id="expense-form" style={{ width: '-webkit-fill-available' }}>
+                    <form id="expense-form" style={{ width: '-webkit-fill-available' }}
+                        onSubmit={handleSubmit(submitHandler)}>
                         <FormControl style={{ textAlign: 'center', width: '-webkit-fill-available' }}>
                             <FormLabel id="demo-radio-buttons-group-label">Transaction Type</FormLabel>
                             <RadioGroup
@@ -39,6 +51,7 @@ export const AddTransaction = () => {
                                 name="radio-buttons-group"
                                 onChange={(e) => setTransactionType(e.target.value)}
                                 style={{ display: 'flex', justifyContent: 'space-around' }}
+                                {...register("tranType")}
                             >
                                 <FormControlLabel value="expense" control={<Radio />} label="Expense" />
                                 <FormControlLabel value="income" control={<Radio />} label="Income" />
@@ -54,7 +67,8 @@ export const AddTransaction = () => {
                                     <div className="input-with-icon">
                                         <div className="input-icon">₹</div>
                                         <input type="number" id="expense-amount" className="form-control"
-                                            placeholder={0.00} step="50" min={0} required />
+                                            placeholder={0.00} min={0} required 
+                                            {...register('amountSpent')}/>
                                     </div>
                                 </div>
                             </div>
@@ -65,9 +79,14 @@ export const AddTransaction = () => {
                                     </label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <MobileDateTimePicker
+                                            onChange={(newValue) => {
+                                                console.log(newValue);
+                                            }}
+                                            {...register("dateTime")}
                                             // label="Date & Time"
                                             defaultValue={dayjs()}
                                             views={['day', 'month', 'year', 'hours', 'minutes', 'seconds']}
+
                                         />
                                     </LocalizationProvider>
                                 </div>
@@ -76,7 +95,9 @@ export const AddTransaction = () => {
                                     <label htmlFor="party" className='form-label'>
                                         {...transactionType === 'expense' ? 'Paid to' : 'Received from'} *
                                     </label>
-                                    <input type="text" id='party' className='form-control' required />
+                                    <input type="text" id='party' className='form-control' required 
+                                    {...register("paidTo")}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -88,7 +109,9 @@ export const AddTransaction = () => {
                                     <label htmlFor="type" className='form-label'>
                                         Account *
                                     </label>
-                                    <select className='form-control' id='type' required>
+                                    <select 
+                                        {...register("account")}
+                                    className='form-control' id='type' required>
                                         <option value='1'>Select Type</option>
                                         <option value='2'>Cash</option>
                                         <option value='3'>UPI</option>
@@ -98,7 +121,9 @@ export const AddTransaction = () => {
                                 </div>
                                 <div className='form-group'>
                                     <FormControlLabel
-                                        control={<Switch
+                                        control={
+                                        <Switch
+                                            // {...register("isTransfer")}
                                             checked={checked}
                                             onChange={(e) => setChecked(e.target.checked)} />}
                                         label={checked ? "Transaction (un-tick if Transfer)" : "Transfer (tick if Transaction)"}
@@ -110,7 +135,8 @@ export const AddTransaction = () => {
                             <h3 className="form-section-title"></h3>
                             <div className="form-group">
                                 <label htmlFor="category">Expense Category *</label>
-                                <select id="category" className="form-control" required>
+                                <select id="category" className="form-control" required
+                                    {...register("category")}>
                                     <option value='1'>Select Category</option>
                                     <option value='2'>Grocery</option>
                                     <option value='3'>Shopping</option>
@@ -138,7 +164,10 @@ export const AddTransaction = () => {
 
                         <div className="form-section">
                             <h3 className="form-section-title"></h3>
-                            <div className="form-group"><label htmlFor="expense-description">Description *</label><textarea id="expense-description" className="form-control" rows={4} placeholder="Provide details about this expense..." required defaultValue={""} />
+                            <div className="form-group">
+                                <label htmlFor="expense-description">Description *</label>
+                                <textarea id="expense-description" className="form-control" rows={4} placeholder="Provide details about this expense..." required defaultValue={""} 
+                                    {...register('notes')}/>
                             </div>
                             <div className="form-group"><label>Upload Receipt</label><label htmlFor="expense-receipt" className="file-upload"><i>📤</i>
                                 <p>Drag &amp; drop your receipt here,

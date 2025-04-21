@@ -15,7 +15,7 @@ const LandingPage = () => {
           <nav className="navbar navbar-expand-lg custom_nav-container ">
             <a className="navbar-brand" href="index.html">
               <span>
-                E-Advertisement
+                Expense Tracker - Budget Buddy
               </span>
             </a>
             <button

@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 
 export const Login = () => {
   const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
   // let submitHandler
   // try {
   const submitHandler = async (data) => {
@@ -16,6 +17,7 @@ export const Login = () => {
       localStorage.setItem("role", res.data.data.roleId.role);
       toast(res.data.message);
       console.log(res);
+      navigate("/user/dashboard");
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const errorMessage = err.response?.data?.message || err.message || "Something went wrong";

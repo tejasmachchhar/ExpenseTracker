@@ -18,43 +18,58 @@ export const UserSidebar = () => {
       <div className="nav-menu">
         <div className="nav-brand">Budget Buddy</div>
         <ul>
-          <li 
+          <li
             className={isActive("dashboard")}
             onClick={() => handleTabChange("dashboard")}
-            >
+          >
             <Link to="/user/dashboard">
               <i>📊</i> <span>Dashboard</span>
             </Link>
           </li>
-          <li 
+          <li
             className={isActive("addTransaction")}
             onClick={() => handleTabChange("addTransaction")}
           >
             <Link to="/user/addTransaction">
-              <i>✍️</i> <span>Add Transaction</span>
+              <i>➕</i> <span>Add Transaction</span>
             </Link>
           </li>
-          <li>
-            <a href="#">
-              <i>💰</i> <span>Expenses</span>
-            </a>
+          <li
+            className={isActive("transactions")}
+            onClick={() => handleTabChange("transactions")}
+          >
+            <Link to="/user/transactions">
+              <i>💰</i> <span>Transactions</span>
+            </Link>
           </li>
-          <li>
+          <li
+            className={isActive("reports")}
+            onClick={() => handleTabChange("reports")}
+          >
             <a href="#">
               <i>📝</i> <span>Reports</span>
             </a>
           </li>
-          <li>
+          <li
+            className={isActive("categories")}
+            onClick={() => handleTabChange("categories")}
+          >
             <a href="#">
               <i>🏷️</i> <span>Categories</span>
             </a>
           </li>
-          <li>
+          <li
+            className={isActive("accounts")}
+            onClick={() => handleTabChange("accounts")}
+          >
             <a href="#">
-              <i>👥</i> <span>Team</span>
+              <i>👥</i> <span>Accounts</span>
             </a>
           </li>
-          <li>
+          <li
+            className={isActive("settings")}
+            onClick={() => handleTabChange("settings")}
+          >
             <a href="#">
               <i>⚙️</i> <span>Settings</span>
             </a>

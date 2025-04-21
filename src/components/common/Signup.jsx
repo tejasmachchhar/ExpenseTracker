@@ -1,17 +1,20 @@
 import axios from 'axios';
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 export const Signup = () => {
   const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+
   const submitHandler = async (data) => {
     try {
-      data.roleId = "67c138b76acafdcf94ed4b2b"
+      data.roleId = "67c138b76acafdcf94ed4b2b";
       const res = await axios.post('/user', data);
-      toast(res.data.message);
       console.log(res);
+      navigate("/login");
+      toast(res.data.message);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         // console.log(err.response)
@@ -61,7 +64,7 @@ export const Signup = () => {
                   type="text"
                   className="form-control"
                   id="validationCustom01"
-                  defaultValue="Mark"
+                  placeholder="Guddu"
                   required={true}
                   {...register("firstName")}
                 />
@@ -77,7 +80,7 @@ export const Signup = () => {
                   type="text"
                   className="form-control"
                   id="validationCustom02"
-                  defaultValue="Otto"
+                  placeholder="Mishra"
                   required=""
                   {...register("lastName")}
                 />
@@ -85,7 +88,7 @@ export const Signup = () => {
               </div>
               {/*end::Col*/}
 
-              <div className="mb-3">
+              <div className="col-md-6 mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">
                   Email address
                 </label>
@@ -94,6 +97,7 @@ export const Signup = () => {
                   className="form-control"
                   id="exampleInputEmail1"
                   aria-describedby="emailHelp"
+                  placeholder="youremail@xyz.com"
                   required={true}
                   {...register("email")}
                 />
@@ -105,7 +109,7 @@ export const Signup = () => {
               {/*begin::Col*/}
               <div className="col-md-6">
                 <label htmlFor="validationCustomUsername" className="form-label">
-                  Username*
+                  Username
                 </label>
                 <div className="input-group has-validation">
                   <span className="input-group-text" id="inputGroupPrepend">
@@ -116,7 +120,8 @@ export const Signup = () => {
                     className="form-control"
                     id="validationCustomUsername"
                     aria-describedby="inputGroupPrepend"
-                    required={true}
+                    placeholder="GudduMishra"
+                    // required={true}
                     {...register("username")}
                   />
                   <div className="invalid-feedback">Please choose a username.</div>
