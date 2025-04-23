@@ -7,12 +7,13 @@ export const Transactions = () => {
     const fetchTransactions = async () => {
         try {
             const token = localStorage.getItem('token');
+            console.log('Token:', token);
             console.log('Fetching transactions...');
-            const response = await axios.get('/expenses', {
+            const response = await axios.get('/userExpenses', {
                 headers: { Authorization: `Bearer ${token}` },
             });
+            console.log('Response:', response.data);
             setTransactions(response.data);
-            console.log('Transactions fetched:', response.data);
         } catch (error) {
             console.error('Error fetching transactions:', error);
         }
@@ -61,8 +62,8 @@ export const Transactions = () => {
                                         </td>
                                         <td>₹{transaction.amountSpent}</td>
                                         {/* <td>
-                                                                <span className={`status-badge status-${transaction.status.toLowerCase()}`}>{transaction.status}</span>
-                                                            </td> */}
+                                                <span className={`status-badge status-${transaction.status.toLowerCase()}`}>{transaction.status}</span>
+                                            </td> */}
                                         <td className="action-buttons">
                                             <button className="action-btn">👁️</button>
                                             <button className="action-btn">✏️</button>

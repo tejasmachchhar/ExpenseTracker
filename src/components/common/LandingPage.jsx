@@ -13,7 +13,7 @@ const LandingPage = () => {
       <header className="header_section">
         <div className="container-fluid">
           <nav className="navbar navbar-expand-lg custom_nav-container ">
-            <a className="navbar-brand" href="index.html">
+            <a className="navbar-brand" href="">
               <span>
                 Expense Tracker - Budget Buddy
               </span>
@@ -34,31 +34,31 @@ const LandingPage = () => {
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
-            >
+              >
               <div className="d-flex mx-auto flex-column flex-lg-row align-items-center">
                 <ul className="navbar-nav  ">
-                  {/* <li className="nav-item active">
-              <a className="nav-link" href="index.html">
-                Home <span className="sr-only">(current)</span>
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="about.html">
-                {" "}
-                About
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="service.html">
-                {" "}
-                Services{" "}
-              </a>
-            </li> */}
-                  {/* <li className="nav-item">
-              <a className="nav-link" href="#contactLink">
-                Contact Us
-              </a>
-            </li> */}
+                  <li className="nav-item">
+                    <a className="nav-link" href="index.html">
+                      Home <span className="sr-only">(current)</span>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="about.html">
+                      {" "}
+                      About
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="service.html">
+                      {" "}
+                      Services{" "}
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#contactLink">
+                      Contact Us
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div className="quote_btn-container ">
@@ -72,7 +72,7 @@ const LandingPage = () => {
                 </div>
                 <form className="form-inline">
                   <button
-                    className="btn  my-2 my-sm-0 nav_search-btn"
+                    className="btn my-2 my-sm-0 nav_search-btn"
                     type="submit"
                   />
                 </form>

@@ -142,3 +142,23 @@
     max-width: 1170px;
   }
 }
+
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-image {
+    margin-top: 20px;
+  }
+
+  .trusted-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .trusted-brands img {
+    width: 70px;
+  }
+}

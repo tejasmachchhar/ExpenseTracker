@@ -17,8 +17,7 @@ export const AddTransaction = () => {
     const submitHandler = async (data) => {
         data.tranType = transactionType;
         data.isTransfer = checked;
-        data.userId = "680674362d4e96690b0cebd1";
-        console.log("Data: "+data);
+        console.log("Data: " + data);
         // Handle form submission logic here
         try {
             const token = localStorage.getItem('token');
@@ -74,8 +73,8 @@ export const AddTransaction = () => {
                                     <div className="input-with-icon">
                                         <div className="input-icon">₹</div>
                                         <input type="number" id="expense-amount" className="form-control"
-                                            placeholder={0.00} min={0} required 
-                                            {...register('amountSpent')}/>
+                                            placeholder={0.00} min={0} required
+                                            {...register('amountSpent')} />
                                     </div>
                                 </div>
                             </div>
@@ -102,8 +101,8 @@ export const AddTransaction = () => {
                                     <label htmlFor="party" className='form-label'>
                                         {...transactionType === 'expense' ? 'Paid to' : 'Received from'} *
                                     </label>
-                                    <input type="text" id='party' className='form-control' required 
-                                    {...register("paidTo")}
+                                    <input type="text" id='party' className='form-control' required
+                                        {...register("paidTo")}
                                     />
                                 </div>
                             </div>
@@ -116,9 +115,9 @@ export const AddTransaction = () => {
                                     <label htmlFor="type" className='form-label'>
                                         Account *
                                     </label>
-                                    <select 
+                                    <select
                                         {...register("account")}
-                                    className='form-control' id='type' required>
+                                        className='form-control' id='type' required>
                                         <option value='1'>Select Type</option>
                                         <option value='2'>Cash</option>
                                         <option value='3'>UPI</option>
@@ -129,10 +128,10 @@ export const AddTransaction = () => {
                                 <div className='form-group'>
                                     <FormControlLabel
                                         control={
-                                        <Switch
-                                            // {...register("isTransfer")}
-                                            checked={checked}
-                                            onChange={(e) => setChecked(e.target.checked)} />}
+                                            <Switch
+                                                // {...register("isTransfer")}
+                                                checked={checked}
+                                                onChange={(e) => setChecked(e.target.checked)} />}
                                         label={checked ? "Transaction (un-tick if Transfer)" : "Transfer (tick if Transaction)"}
                                     />
                                 </div>
@@ -173,14 +172,15 @@ export const AddTransaction = () => {
                             <h3 className="form-section-title"></h3>
                             <div className="form-group">
                                 <label htmlFor="expense-description">Description *</label>
-                                <textarea id="expense-description" className="form-control" rows={4} placeholder="Provide details about this expense..." required defaultValue={""} 
-                                    {...register('notes')}/>
+                                <textarea id="expense-description" className="form-control" rows={4} placeholder="Provide details about this expense..." required defaultValue={""}
+                                    {...register('notes')} />
                             </div>
                             <div className="form-group"><label>Upload Receipt</label><label htmlFor="expense-receipt" className="file-upload"><i>📤</i>
                                 <p>Drag &amp; drop your receipt here,
                                     or click to browse</p>
                                 <p><small>Supports JPG,
-                                    PNG or PDF up to 10MB</small></p><input type="file" id="expense-receipt" accept=".jpg, .jpeg, .png, .pdf" />
+                                    PNG or PDF up to 10MB</small></p>
+                                <input type="file" id="expense-receipt" accept=".jpg, .jpeg, .png, .pdf" {...register('attachmentUrl')}/>
                             </label></div>
                         </div>
                         <div className="form-actions">
