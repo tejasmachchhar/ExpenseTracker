@@ -1,21 +1,37 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const UserSidebar = () => {
   const [currentTab, setCurrentTab] = useState("dashboard");
   const navigate = useNavigate();
-  const handleTabChange = (tab) => {
+  
+  useEffect(() => {
+    const handleTabChangeEvent = (e) => {
+      setCurrentTab(e.detail);
+    };
+
+    window.addEventListener('sidebarTabChange', handleTabChangeEvent);
+    return () => window.removeEventListener('sidebarTabChange', handleTabChangeEvent);
+  }, []);
+
+  const handleTabChange = (tab, path) => {
     setCurrentTab(tab);
+    if (path) {
+      navigate(path);
+    }
   };
+
   const isActive = (tab) => {
     return currentTab === tab ? "active" : "";
   }
+
   const handleLogout = () => {
-    // Clear user data from local storage or state management
-    localStorage.removeItem("token");
-    // Redirect to login page
-    navigate('/login');
+    if (window.confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem("token");
+      navigate('/login');
+    }
   }
+
   return (
     <>
       <div className="nav-menu">
@@ -23,35 +39,27 @@ export const UserSidebar = () => {
         <ul>
           <li
             className={isActive("dashboard")}
-            onClick={() => handleTabChange("dashboard")}
+            onClick={() => handleTabChange("dashboard", "/user/dashboard")}
           >
-            <Link to="/user/dashboard">
-              <i>📊</i> <span>Dashboard</span>
-            </Link>
+            <i>📊</i> <span>Dashboard</span>
           </li>
           <li
             className={isActive("addTransaction")}
-            onClick={() => handleTabChange("addTransaction")}
+            onClick={() => handleTabChange("addTransaction", "/user/addTransaction")}
           >
-            <Link to="/user/addTransaction">
-              <i>➕</i> <span>Add Transaction</span>
-            </Link>
+            <i>➕</i> <span>Add Transaction</span>
           </li>
           <li
             className={isActive("transactions")}
-            onClick={() => handleTabChange("transactions")}
+            onClick={() => handleTabChange("transactions", "/user/transactions")}
           >
-            <Link to="/user/transactions">
-              <i>💰</i> <span>Transactions</span>
-            </Link>
+            <i>💰</i> <span>Transactions</span>
           </li>
           <li
             className={isActive("reports")}
-            onClick={() => handleTabChange("reports")}
+            onClick={() => handleTabChange("reports", "/user/reports")}
           >
-            <Link to="/user/reports">
-              <i>📝</i> <span>Reports</span>
-            </Link>
+            <i>📝</i> <span>Reports</span>
           </li>
           {/* <li
             className={isActive("categories")}
@@ -69,7 +77,7 @@ export const UserSidebar = () => {
               <i>👥</i> <span>Accounts</span>
             </a>
           </li>
-          <li
+<li
             className={isActive("settings")}
             onClick={() => handleTabChange("settings")}
           >
@@ -79,11 +87,13 @@ export const UserSidebar = () => {
           </li> */}
           <li
             className={isActive("logout")}
-            onClick={() => {handleTabChange("logout"); handleLogout();}}
+            onClick={() => {
+              handleTabChange("logout");
+              handleLogout();
+            }}
           >
-              <i>🚪</i> <span>Logout</span>
+            <i>🚪</i> <span>Logout</span>
           </li>
-
         </ul>
       </div>
     </>

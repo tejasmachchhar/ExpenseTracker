@@ -1,60 +1,39 @@
 import { Label } from '@mui/icons-material'
 import { FormControl, FormControlLabel, FormLabel, Input, Radio, RadioGroup, Switch } from '@mui/material'
-import { fontGrid } from '@mui/material/styles/cssUtils'
 import { DateTimePicker, LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { addTransaction } from '../../store/slices/transactionSlice'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 export const AddTransaction = () => {
+    const dispatch = useDispatch();
     const [checked, setChecked] = useState(true);
     const [transactionType, setTransactionType] = useState('expense');
-
     const [category, setCategory] = useState("");
     const { register, handleSubmit } = useForm();
+
     const submitHandler = async (data) => {
         try {
-            const token = localStorage.getItem('token');
-
-            // Create a FormData object
             const formData = new FormData();
-
-            // Append all form fields to FormData
-            formData.append('tranType', transactionType);
-            formData.append('isTransfer', checked);
-            formData.append('amountSpent', data.amountSpent);
-            formData.append('dateTime', data.dateTime);
-            formData.append('paidTo', data.paidTo);
-            formData.append('account', data.account);
-            formData.append('category', data.category);
-            formData.append('notes', data.notes);
-
-            // Append the file (if any)
-            if (data.attachmentUrl && data.attachmentUrl[0]) {
-                formData.append('attachmentUrl', data.attachmentUrl[0]);
+            for (const key in data) {
+                formData.append(key, data[key]);
             }
 
-            // Send the FormData to the backend
-            const res = await axios.post('/expense', formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            toast.success('Transaction added successfully!');
-            console.log('Transaction added:', res.data);
-
-            // Clear form data
-            setTransactionType('expense');
-            setChecked(true);
-            setCategory('');
-            document.getElementById('expense-form').reset();
+            const resultAction = await dispatch(addTransaction(formData));
+            if (addTransaction.fulfilled.match(resultAction)) {
+                toast.success('Transaction added successfully');
+                document.getElementById('expense-form').reset();
+            } else {
+                throw new Error(resultAction.error.message);
+            }
         } catch (error) {
             console.error('Error adding transaction:', error);
+            toast.error(error.message || 'Error adding transaction');
         }
     }
 
@@ -238,7 +217,7 @@ export const AddTransaction = () => {
                             <div className="action-group">
                                 <button type="button" className="btn btn-outline">Save as
                                     Draft</button>
-                                <button type="submit" className="btn btn-primary">Submit Expense</button>
+                                <button type="submit" className="btn btn-primary">Submit Transation</button>
                             </div>
                         </div>
                     </form>

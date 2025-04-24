@@ -1,26 +1,23 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { format } from 'date-fns';
 import { toast, ToastContainer } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTransactions } from '../../store/slices/transactionSlice';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const Transactions = () => {
-    const [transactions, setTransactions] = useState([]);
-    const fetchTransactions = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/userExpenses', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setTransactions(response.data);
-        } catch (error) {
-            toast.error('Error fetching transactions. Please try again later.');
-            console.error('Error fetching transactions:', error);
-        }
-    }
+    const dispatch = useDispatch();
+    const { transactions, status, error } = useSelector((state) => state.transactions);
+
     useEffect(() => {
-        fetchTransactions();
-    }, []); // Empty dependency array ensures this runs only once when the component mounts
+        if (status === 'idle') {
+            dispatch(fetchTransactions());
+        }
+
+        if (error) {
+            toast.error('Error fetching transactions. Please try again later.');
+        }
+    }, [dispatch, status, error]);
 
     return (
         <div className="main-content">
@@ -45,42 +42,33 @@ export const Transactions = () => {
                             <th>Description</th>
                             <th>Category</th>
                             <th>Amount</th>
-                            {/* <th>Status</th> */}
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            // transactions.length > 0 ?
-                            transactions?.data?.map((transaction, index) => {
-                                return (
-                                    // console.log("Tr: "+ transaction.dateTime),
-                                    <tr key={transaction._id || index}>
-                                        <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
-                                        <td>{transaction.notes}</td>
-                                        <td>
-                                            <span className={`category-badge badge-travel`}>{transaction.category}</span>
-                                        </td>
-                                        <td>₹{transaction.amountSpent}</td>
-                                        {/* <td>
-                                                <span className={`status-badge status-${transaction.status.toLowerCase()}`}>{transaction.status}</span>
-                                            </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                            // :
-                            // <tr>
-                            //     <td colSpan="5" style={{ textAlign: 'center' }}>No transactions available</td>
-                            // </tr>
-                        }
+                        {status === 'loading' ? (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center' }}>Loading...</td>
+                            </tr>
+                        ) : transactions?.data?.map((transaction) => (
+                            <tr key={transaction._id || transaction.id}>
+                                <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
+                                <td>{transaction.notes}</td>
+                                <td>
+                                    <span style={{ color: 'black' }} className={`category-badge badge-${(transaction.category || '').toLowerCase()}`}>
+                                        {transaction.category}
+                                    </span>
+                                </td>
+                                <td>₹{transaction.amountSpent}</td>
+                                <td className="action-buttons">
+                                    <button className="action-btn">👁️</button>
+                                    <button className="action-btn">✏️</button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
-
         </div>
     )
 }

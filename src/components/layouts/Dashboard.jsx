@@ -1,83 +1,28 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTransactions, fetchDashboardData } from '../../store/slices/transactionSlice';
+import { Fab } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export const Dashboard = () => {
-    const [transactions, setTransactions] = useState([]);
-    const [username, setUsername] = useState({
-        firstName: localStorage.getItem('username') || '',
-        lastName: localStorage.getItem('surname') || ' '
-    });
-    const [dashboardData, setDashboardData] = useState({
-        income: {
-            total: 0,
-            thisMonth: 0,
-            monthlyAverage: 0
-        },
-        expense: {
-            total: 0,
-            thisMonth: 0,
-            monthlyAverage: 0
-        },
-        categoryWiseTotal: []
-    });
-
-    const fetchUserData = async () => {
-        try {
-            const firstName = localStorage.getItem('username') || '';
-            const lastName = localStorage.getItem('surname') || ' ';
-            setUsername({
-                firstName: firstName,
-                lastName: lastName
-            });
-            // const token = localStorage.getItem('token');
-            // const response = await axios.get('/user', {
-            //     headers: { Authorization: `Bearer ${token}` },
-            // });
-            // console.log('User data fetched:', response.data);
-            // Handle user data if needed
-        } catch (error) {
-            toast.error('Error fetching user data. Please try again later.');
-            console.error('Error fetching user data:', error);
-        }
-    };
-
-    const fetchDashboardData = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/dashboard', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setDashboardData(response.data.data);
-            console.log('Dashboard data fetched:', response.data.data);
-        } catch (error) {
-            toast.error('Error fetching dashboard data. Please try again later.');
-            console.error('Error fetching dashboard data:', error);
-        }
-    };
-
-    const fetchTransactions = async () => {
-        try {
-            console.log('Fetching transactions...');
-            const token = localStorage.getItem('token');
-            const response = await axios.get('/userExpenses', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setTransactions(response.data);
-            console.log('Transactions fetched:', response.data);
-        } catch (error) {
-            toast.error('Error fetching transactions. Please try again later.');
-            console.error('Error fetching transactions:', error);
-        }
-    }
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { transactions, dashboardData, userData, status, error } = useSelector((state) => state.transactions);
+    
     useEffect(() => {
-        fetchTransactions();
-        fetchDashboardData();
-        fetchUserData();
-    }, []); // Empty dependency array ensures this runs only once when the component mounts
+        if (status === 'idle') {
+            dispatch(fetchTransactions());
+            dispatch(fetchDashboardData());
+        }
+
+        if (error) {
+            toast.error('Error fetching data. Please try again later.');
+        }
+    }, [dispatch, status, error]);
+
     return (
         <>
             <meta charSet="UTF-8" />
@@ -88,8 +33,8 @@ export const Dashboard = () => {
                     <div className="dashboard-header">
                         <h1>Expense Dashboard</h1>
                         <div className="user-profile">
-                            <span>Welcome, {username.firstName} </span>
-                            <div className="user-avatar">{`${username.firstName[0]}${username.lastName[0]}`}</div>
+                            <span>Welcome, {userData.firstName} </span>
+                            <div className="user-avatar">{`${userData.firstName[0]}${userData.lastName[0]}`}</div>
                         </div>
                     </div>
                     <div className="stats-grid">
@@ -126,8 +71,8 @@ export const Dashboard = () => {
                         <div className="recent-transactions">
                             <div className="section-header">
                                 <h2>Recent Transactions</h2>
-                                <Link to = "/user/transactions" className="view-all-link">
-                                    <a>View All</a>
+                                <Link to="/user/transactions" className="view-all-link">
+                                    <div>View All</div>
                                 </Link>
                             </div>
                             <table className="transaction-table">
@@ -137,87 +82,15 @@ export const Dashboard = () => {
                                         <th>Description</th>
                                         <th>Category</th>
                                         <th>Amount</th>
-                                        {/* <th>Status</th> */}
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Mar 15, 2025</td>
-                                        <td>Client meeting lunch</td>
-                                        <td>
-                                            <span className="category-badge badge-food">Food</span>
-                                        </td>
-                                        <td>₹85.50</td>
-                                        {/* <td>
-                                            <span className="status-badge status-approved">Approved</span>
-                                        </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 12, 2025</td>
-                                        <td>Office supplies</td>
-                                        <td>
-                                            <span className="category-badge badge-office">Office</span>
-                                        </td>
-                                        <td>₹123.75</td>
-                                        {/* <td>
-                                            <span className="status-badge status-approved">Approved</span>
-                                        </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 10, 2025</td>
-                                        <td>Flight to Boston</td>
-                                        <td>
-                                            <span className="category-badge badge-travel">Travel</span>
-                                        </td>
-                                        <td>₹425.00</td>
-                                        {/* <td>
-                                            <span className="status-badge status-pending">Pending</span>
-                                        </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 8, 2025</td>
-                                        <td>Software subscription</td>
-                                        <td>
-                                            <span className="category-badge badge-other">Other</span>
-                                        </td>
-                                        <td>₹49.99</td>
-                                        {/* <td>
-                                            <span className="status-badge status-rejected">Rejected</span>
-                                        </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 5, 2025</td>
-                                        <td>Team dinner</td>
-                                        <td>
-                                            <span className="category-badge badge-food">Food</span>
-                                        </td>
-                                        <td>₹215.30</td>
-                                        {/* <td>
-                                            <span className="status-badge status-approved">Approved</span>
-                                        </td> */}
-                                        <td className="action-buttons">
-                                            <button className="action-btn">👁️</button>
-                                            <button className="action-btn">✏️</button>
-                                        </td>
-                                    </tr>
-                                    {transactions?.data?.map((transaction) => (
+                                    {status === 'loading' ? (
+                                        <tr>
+                                            <td colSpan="5" style={{ textAlign: 'center' }}>Loading...</td>
+                                        </tr>
+                                    ) : transactions?.data?.map((transaction) => (
                                         <tr key={transaction._id || transaction.id}>
                                             <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
                                             <td>{transaction.notes}</td>
@@ -239,7 +112,24 @@ export const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            {/* <parameter name="language" /> */}
+            <Fab 
+                color="primary" 
+                aria-label="add"
+                onClick={() => {
+                    window.dispatchEvent(new CustomEvent('sidebarTabChange', { detail: 'addTransaction' }));
+                    navigate('/user/addtransaction');
+                }}
+                sx={{
+                    position: 'fixed',
+                    bottom: 30,
+                    right: 30,
+                    '&:hover': {
+                        backgroundColor: '#2980b9'
+                    }
+                }}
+            >
+                <AddCircleIcon />
+            </Fab>
         </>
     )
 }
