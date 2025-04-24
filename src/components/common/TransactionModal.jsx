@@ -20,7 +20,7 @@ export const TransactionModal = ({
             <div className="modal-content">
                 <button className="modal-close" onClick={onClose}>×</button>
                 <h2>{isEditing ? 'Edit Transaction' : 'View Transaction'}</h2>
-                
+
                 <div className="modal-scroll-container">
                     {isEditing ? (
                         <form onSubmit={onUpdate} className="form-container">
@@ -30,7 +30,7 @@ export const TransactionModal = ({
                                     type="text"
                                     className="form-control"
                                     value={editForm.notes}
-                                    onChange={(e) => onEditChange({...editForm, notes: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, notes: e.target.value })}
                                     required
                                 />
                             </div>
@@ -39,7 +39,7 @@ export const TransactionModal = ({
                                 <select
                                     className="form-control"
                                     value={editForm.category}
-                                    onChange={(e) => onEditChange({...editForm, category: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, category: e.target.value })}
                                     required
                                 >
                                     <option value="">Select a category</option>
@@ -61,7 +61,7 @@ export const TransactionModal = ({
                                     type="number"
                                     className="form-control"
                                     value={editForm.amountSpent}
-                                    onChange={(e) => onEditChange({...editForm, amountSpent: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, amountSpent: e.target.value })}
                                     required
                                 />
                             </div>
@@ -71,7 +71,7 @@ export const TransactionModal = ({
                                     type="datetime-local"
                                     className="form-control"
                                     value={editForm.dateTime}
-                                    onChange={(e) => onEditChange({...editForm, dateTime: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, dateTime: e.target.value })}
                                     required
                                 />
                             </div>
@@ -81,7 +81,7 @@ export const TransactionModal = ({
                                     type="text"
                                     className="form-control"
                                     value={editForm.paidTo}
-                                    onChange={(e) => onEditChange({...editForm, paidTo: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, paidTo: e.target.value })}
                                 />
                             </div>
                             <div className="form-group">
@@ -89,7 +89,7 @@ export const TransactionModal = ({
                                 <select
                                     className="form-control"
                                     value={editForm.transactionType}
-                                    onChange={(e) => onEditChange({...editForm, transactionType: e.target.value})}
+                                    onChange={(e) => onEditChange({ ...editForm, transactionType: e.target.value })}
                                     required
                                 >
                                     <option value="expense">Expense</option>
@@ -111,11 +111,10 @@ export const TransactionModal = ({
                             <div className="detail-row">
                                 <span className="label">Category:</span>
                                 <span className="value">
-                                    <span className={`category-badge ${
-                                        transaction.category 
-                                            ? `badge-${transaction.category.toLowerCase().replace(/\s+/g, '')}` 
+                                    <span className={`category-badge ${transaction.category
+                                            ? `badge-${transaction.category.toLowerCase().replace(/\s+/g, '')}`
                                             : ''
-                                    }`}>
+                                        }`}>
                                         {transaction.category || 'Uncategorized'}
                                     </span>
                                 </span>
