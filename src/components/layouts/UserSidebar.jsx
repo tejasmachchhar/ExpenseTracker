@@ -53,7 +53,7 @@ export const UserSidebar = () => {
               <i>📝</i> <span>Reports</span>
             </Link>
           </li>
-          <li
+          {/* <li
             className={isActive("categories")}
             onClick={() => handleTabChange("categories")}
           >
@@ -76,7 +76,7 @@ export const UserSidebar = () => {
             <a href="#">
               <i>⚙️</i> <span>Settings</span>
             </a>
-          </li>
+          </li> */}
           <li
             className={isActive("logout")}
             onClick={() => {handleTabChange("logout"); handleLogout();}}

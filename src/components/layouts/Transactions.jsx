@@ -1,20 +1,20 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
     const fetchTransactions = async () => {
         try {
             const token = localStorage.getItem('token');
-            console.log('Token:', token);
-            console.log('Fetching transactions...');
             const response = await axios.get('/userExpenses', {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log('Response:', response.data);
             setTransactions(response.data);
         } catch (error) {
+            toast.error('Error fetching transactions. Please try again later.');
             console.error('Error fetching transactions:', error);
         }
     }
@@ -24,6 +24,7 @@ export const Transactions = () => {
 
     return (
         <div className="main-content">
+            <ToastContainer position="top-right" autoClose={3000} />
             <div className="dashboard-header">
                 <h1>Transactions</h1>
                 <div className="user-profile">
@@ -51,10 +52,10 @@ export const Transactions = () => {
                     <tbody>
                         {
                             // transactions.length > 0 ?
-                            transactions?.data?.map((transaction) => {
+                            transactions?.data?.map((transaction, index) => {
                                 return (
                                     // console.log("Tr: "+ transaction.dateTime),
-                                    <tr key={transaction.id}>
+                                    <tr key={transaction._id || index}>
                                         <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
                                         <td>{transaction.notes}</td>
                                         <td>

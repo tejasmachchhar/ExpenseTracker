@@ -14,9 +14,12 @@ export const Login = () => {
     try {
       const res = await axios.post("/user/login", data);
       const { token, message } = res.data;
+      console.log(res.data);
 
       // Save token to localStorage
       localStorage.setItem('token', token);
+      localStorage.setItem('username', res.data.user.firstName);
+      localStorage.setItem('surname', res.data.user.lastName);
 
       toast.success(message);
       toast(res.data.message);

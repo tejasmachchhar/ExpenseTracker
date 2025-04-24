@@ -1,21 +1,82 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
     const [transactions, setTransactions] = useState([]);
+    const [username, setUsername] = useState({
+        firstName: localStorage.getItem('username') || '',
+        lastName: localStorage.getItem('surname') || ' '
+    });
+    const [dashboardData, setDashboardData] = useState({
+        income: {
+            total: 0,
+            thisMonth: 0,
+            monthlyAverage: 0
+        },
+        expense: {
+            total: 0,
+            thisMonth: 0,
+            monthlyAverage: 0
+        },
+        categoryWiseTotal: []
+    });
+
+    const fetchUserData = async () => {
+        try {
+            const firstName = localStorage.getItem('username') || '';
+            const lastName = localStorage.getItem('surname') || ' ';
+            setUsername({
+                firstName: firstName,
+                lastName: lastName
+            });
+            // const token = localStorage.getItem('token');
+            // const response = await axios.get('/user', {
+            //     headers: { Authorization: `Bearer ${token}` },
+            // });
+            // console.log('User data fetched:', response.data);
+            // Handle user data if needed
+        } catch (error) {
+            toast.error('Error fetching user data. Please try again later.');
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    const fetchDashboardData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('/dashboard', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setDashboardData(response.data.data);
+            console.log('Dashboard data fetched:', response.data.data);
+        } catch (error) {
+            toast.error('Error fetching dashboard data. Please try again later.');
+            console.error('Error fetching dashboard data:', error);
+        }
+    };
+
     const fetchTransactions = async () => {
         try {
             console.log('Fetching transactions...');
-            const response = await axios.get('/expenses');
+            const token = localStorage.getItem('token');
+            const response = await axios.get('/userExpenses', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setTransactions(response.data);
             console.log('Transactions fetched:', response.data);
         } catch (error) {
+            toast.error('Error fetching transactions. Please try again later.');
             console.error('Error fetching transactions:', error);
         }
     }
+
     useEffect(() => {
         fetchTransactions();
+        fetchDashboardData();
+        fetchUserData();
     }, []); // Empty dependency array ensures this runs only once when the component mounts
     return (
         <>
@@ -27,99 +88,47 @@ export const Dashboard = () => {
                     <div className="dashboard-header">
                         <h1>Expense Dashboard</h1>
                         <div className="user-profile">
-                            <span>Welcome, Tejas </span>
-                            <div className="user-avatar">TM</div>
+                            <span>Welcome, {username.firstName} </span>
+                            <div className="user-avatar">{`${username.firstName[0]}${username.lastName[0]}`}</div>
                         </div>
                     </div>
                     <div className="stats-grid">
                         <div className="stat-card">
                             <div className="stat-info">
                                 <h3>Total Expenses</h3>
-                                <p>₹12,450</p>
+                                <p>₹{dashboardData.expense.total.toFixed(2)}</p>
                             </div>
                             <div className="stat-icon icon-total">₹</div>
                         </div>
                         <div className="stat-card">
                             <div className="stat-info">
-                                <h3>This Month</h3>
-                                <p>₹2,840</p>
+                                <h3>This Month Expense</h3>
+                                <p>₹{dashboardData.expense.thisMonth.toFixed(2)}</p>
                             </div>
                             <div className="stat-icon icon-month">M</div>
                         </div>
                         <div className="stat-card">
                             <div className="stat-info">
-                                <h3>Average Monthly</h3>
-                                <p>₹2,075</p>
+                                <h3>Average Monthly Expenses</h3>
+                                <p>₹{dashboardData.expense.monthlyAverage.toFixed(2)}</p>
                             </div>
                             <div className="stat-icon icon-average">A</div>
                         </div>
+                        <div className="stat-card">
+                            <div className="stat-info">
+                                <h3>This Month Income</h3>
+                                <p>₹{dashboardData.income.thisMonth.toFixed(2)}</p>
+                            </div>
+                            <div className="stat-icon icon-month">M</div>
+                        </div>
                     </div>
                     <div className="dashboard-content">
-                        <div className="main-chart-container">
-                            <div className="chart-header">
-                                <h2>Expense Trends</h2>
-                                <div className="chart-filter">
-                                    <select>
-                                        <option>Last 6 Months</option>
-                                        <option>Last Year</option>
-                                        <option>This Year</option>
-                                        <option>Custom Range</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="chart-container">
-                                <canvas id="expense-trend-chart" />
-                            </div>
-                        </div>
-                        <div className="categories-container">
-                            <h2>Expense by Category</h2>
-                            <div className="category-list">
-                                <div className="category-item">
-                                    <div className="category-info">
-                                        <div className="category-icon icon-travel">T</div>
-                                        <div className="category-name">
-                                            <h4>Travel</h4>
-                                            <p>25% of total</p>
-                                        </div>
-                                    </div>
-                                    <div className="category-amount">₹3,112.50</div>
-                                </div>
-                                <div className="category-item">
-                                    <div className="category-info">
-                                        <div className="category-icon icon-food">F</div>
-                                        <div className="category-name">
-                                            <h4>Food &amp; Dining</h4>
-                                            <p>32% of total</p>
-                                        </div>
-                                    </div>
-                                    <div className="category-amount">₹3,984.00</div>
-                                </div>
-                                <div className="category-item">
-                                    <div className="category-info">
-                                        <div className="category-icon icon-office">O</div>
-                                        <div className="category-name">
-                                            <h4>Office Supplies</h4>
-                                            <p>18% of total</p>
-                                        </div>
-                                    </div>
-                                    <div className="category-amount">₹2,241.00</div>
-                                </div>
-                                <div className="category-item">
-                                    <div className="category-info">
-                                        <div className="category-icon icon-other">X</div>
-                                        <div className="category-name">
-                                            <h4>Other</h4>
-                                            <p>25% of total</p>
-                                        </div>
-                                    </div>
-                                    <div className="category-amount">₹3,112.50</div>
-                                </div>
-                            </div>
-                        </div>
                         <div className="recent-transactions">
                             <div className="section-header">
                                 <h2>Recent Transactions</h2>
-                                <a href="#">View All</a>
+                                <Link to = "/user/transactions" className="view-all-link">
+                                    <a>View All</a>
+                                </Link>
                             </div>
                             <table className="transaction-table">
                                 <thead>
@@ -208,33 +217,22 @@ export const Dashboard = () => {
                                             <button className="action-btn">✏️</button>
                                         </td>
                                     </tr>
-                                    {
-                                    // transactions.length > 0 ?
-                                        transactions?.data?.map((transaction) => {
-                                            return (
-                                                // console.log("Tr: "+ transaction.dateTime),
-                                                <tr key={transaction.id}>
-                                                    <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
-                                                    <td>{transaction.notes}</td>
-                                                    <td>
-                                                        <span className={`category-badge badge-travel`}>{transaction.category}</span>
-                                                    </td>
-                                                    <td>₹{transaction.amountSpent}</td>
-                                                    {/* <td>
-                                                        <span className={`status-badge status-${transaction.status.toLowerCase()}`}>{transaction.status}</span>
-                                                    </td> */}
-                                                    <td className="action-buttons">
-                                                        <button className="action-btn">👁️</button>
-                                                        <button className="action-btn">✏️</button>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })                                    
-                                        // :
-                                        // <tr>
-                                        //     <td colSpan="5" style={{ textAlign: 'center' }}>No transactions available</td>
-                                        // </tr>
-                                    }
+                                    {transactions?.data?.map((transaction) => (
+                                        <tr key={transaction._id || transaction.id}>
+                                            <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy')}</td>
+                                            <td>{transaction.notes}</td>
+                                            <td>
+                                                <span className={`category-badge badge-${(transaction.category || '').toLowerCase()}`}>
+                                                    {transaction.category}
+                                                </span>
+                                            </td>
+                                            <td>₹{transaction.amountSpent}</td>
+                                            <td className="action-buttons">
+                                                <button className="action-btn">👁️</button>
+                                                <button className="action-btn">✏️</button>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
