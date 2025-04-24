@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import './UserSidebar.css'
 
 export const UserSidebar = () => {
   const [currentTab, setCurrentTab] = useState("dashboard");
@@ -48,59 +49,35 @@ export const UserSidebar = () => {
 
   return (
     <>
-      <div className="nav-menu">
-        <div className="nav-brand">Budget Buddy</div>
-        <ul>
+      <div className="sidebar-navigation">
+        <div className="sidebar-brand">Budget Buddy</div>
+        <ul className="sidebar-menu">
           <li
-            className={isActive("dashboard")}
+            className={`sidebar-menu-item ${isActive("dashboard")}`}
             onClick={() => handleTabChange("dashboard", "/user/dashboard")}
           >
             <i>📊</i> <span>Dashboard</span>
           </li>
           <li
-            className={isActive("addTransaction")}
+            className={`sidebar-menu-item ${isActive("addTransaction")}`}
             onClick={() => handleTabChange("addTransaction", "/user/addtransaction")}
           >
             <i>➕</i> <span>Add Transaction</span>
           </li>
           <li
-            className={isActive("transactions")}
+            className={`sidebar-menu-item ${isActive("transactions")}`}
             onClick={() => handleTabChange("transactions", "/user/transactions")}
           >
             <i>💰</i> <span>Transactions</span>
           </li>
           <li
-            className={isActive("reports")}
+            className={`sidebar-menu-item ${isActive("reports")}`}
             onClick={() => handleTabChange("reports", "/user/reports")}
           >
             <i>📝</i> <span>Reports</span>
           </li>
-{/* <li
-            className={isActive("categories")}
-            onClick={() => handleTabChange("categories")}
-          >
-            <a href="#">
-              <i>🏷️</i> <span>Categories</span>
-            </a>
-          </li>
           <li
-            className={isActive("accounts")}
-            onClick={() => handleTabChange("accounts")}
-          >
-            <a href="#">
-              <i>👥</i> <span>Accounts</span>
-            </a>
-          </li>
-<li
-            className={isActive("settings")}
-            onClick={() => handleTabChange("settings")}
-          >
-            <a href="#">
-              <i>⚙️</i> <span>Settings</span>
-            </a>
-          </li> */}
-          <li
-            className={isActive("logout")}
+            className={`sidebar-menu-item ${isActive("logout")}`}
             onClick={() => {
               handleTabChange("logout");
               handleLogout();

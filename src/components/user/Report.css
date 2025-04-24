@@ -1,0 +1,64 @@
+.categories-container {
+  margin: 2rem 0;
+}
+
+.categories-container .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.categories-container .stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.categories-container .stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.categories-container .stat-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.categories-container .stat-info p {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.categories-container .stat-info small {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.categories-container .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* Category-specific colors */
+.icon-food { background-color: #e74c3c; }
+.icon-transportation { background-color: #3498db; }
+.icon-utilities { background-color: #2ecc71; }
+.icon-entertainment { background-color: #9b59b6; }
+.icon-shopping { background-color: #f1c40f; }
+.icon-health { background-color: #1abc9c; }
+.icon-others { background-color: #95a5a6; }

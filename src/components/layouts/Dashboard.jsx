@@ -6,8 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactions, fetchDashboardData, updateTransaction } from '../../store/slices/transactionSlice';
 import { Fab } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { TransactionTable } from '../common/TransactionTable';
+import { TransactionModal } from '../common/TransactionModal';
+import '../../../src/assets/css/components.css';
+
 
 export const Dashboard = () => {
+    const { expenseCategories, incomeCategories } = useSelector((state) => state.categories);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { transactions, dashboardData, userData, status, error } = useSelector((state) => state.transactions);
@@ -36,7 +41,7 @@ export const Dashboard = () => {
 
     const handleEdit = (transaction) => {
         const formattedDateTime = transaction.dateTime ? new Date(transaction.dateTime).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16);
-        
+
         setSelectedTransaction(transaction);
         setEditForm({
             notes: transaction.notes || '',
@@ -73,20 +78,24 @@ export const Dashboard = () => {
         }
     };
 
+    // Get last 10 transactions
+    const recentTransactions = transactions?.data?.slice(0, 10) || [];
+
     return (
         <>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>Expense Dashboard</title>
             <div className="main-content">
-                <div className="dashboard-container">
+                <div className="page-container">
                     <div className="dashboard-header">
                         <h1>Expense Dashboard</h1>
                         <div className="user-profile">
-                            <span>Welcome, {userData.firstName} </span>
+                            <span>Welcome, {userData.firstName}</span>
                             <div className="user-avatar">{`${userData.firstName[0]}${userData.lastName[0]}`}</div>
                         </div>
                     </div>
+
                     <div className="stats-grid">
                         <div className="stat-card">
                             <div className="stat-info">
@@ -117,161 +126,39 @@ export const Dashboard = () => {
                             <div className="stat-icon icon-month">M</div>
                         </div>
                     </div>
+
                     <div className="dashboard-content">
                         <div className="recent-transactions">
                             <div className="section-header">
                                 <h2>Recent Transactions</h2>
-                                <Link to="/user/transactions" className="view-all-link">
-                                    <div>View All</div>
-                                </Link>
+                                <Link to="/user/transactions" className="view-all-link">View All</Link>
                             </div>
-                            <table className="transaction-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Category</th>
-                                        <th>Amount</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {status === 'loading' ? (
-                                        <tr>
-                                            <td colSpan="5" style={{ textAlign: 'center' }}>Loading...</td>
-                                        </tr>
-                                    ) : transactions?.data?.map((transaction) => (
-                                        <tr key={transaction._id || transaction.id}>
-                                            <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy HH:mm')}</td>
-                                            <td>{transaction.notes}</td>
-                                            <td>
-                                                <span className={`category-badge ${
-                                                    transaction.category 
-                                                        ? `badge-${transaction.category.toLowerCase().replace(/\s+/g, '')}` 
-                                                        : ''
-                                                }`}>
-                                                    {transaction.category || 'Uncategorized'}
-                                                </span>
-                                            </td>
-                                            <td>₹{transaction.amountSpent}</td>
-                                            <td className="action-buttons">
-                                                <button 
-                                                    className="action-btn view-btn"
-                                                    onClick={() => handleView(transaction)}
-                                                    title="View"
-                                                >
-                                                    👁️
-                                                </button>
-                                                <button 
-                                                    className="action-btn edit-btn"
-                                                    onClick={() => handleEdit(transaction)}
-                                                    title="Edit"
-                                                >
-                                                    ✏️
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <TransactionTable
+                                transactions={recentTransactions}
+                                isLoading={status === 'loading'}
+                                onView={handleView}
+                                onEdit={handleEdit}
+                                showDelete={false}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Transaction Modal */}
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close" onClick={() => setIsModalOpen(false)}>×</button>
-                        <h2>{isEditing ? 'Edit Transaction' : 'View Transaction'}</h2>
-                        
-                        {isEditing ? (
-                            <form onSubmit={handleUpdate} className="edit-form">
-                                <div className="form-group">
-                                    <label>Description</label>
-                                    <input
-                                        type="text"
-                                        value={editForm.notes}
-                                        onChange={(e) => setEditForm({...editForm, notes: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Category</label>
-                                    <input
-                                        type="text"
-                                        value={editForm.category}
-                                        onChange={(e) => setEditForm({...editForm, category: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Amount</label>
-                                    <input
-                                        type="number"
-                                        value={editForm.amountSpent}
-                                        onChange={(e) => setEditForm({...editForm, amountSpent: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Date & Time</label>
-                                    <input
-                                        type="datetime-local"
-                                        value={editForm.dateTime.split('.')[0]}
-                                        onChange={(e) => setEditForm({...editForm, dateTime: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Paid To / Received From</label>
-                                    <input
-                                        type="text"
-                                        value={editForm.paidTo}
-                                        onChange={(e) => setEditForm({...editForm, paidTo: e.target.value})}
-                                    />
-                                </div>
-                                <button type="submit" className="update-btn">Update Transaction</button>
-                            </form>
-                        ) : (
-                            <div className="transaction-details">
-                                <div className="detail-row">
-                                    <span className="label">Date & Time:</span>
-                                    <span className="value">{format(new Date(selectedTransaction.dateTime), 'MMM dd, yyyy HH:mm')}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span className="label">Description:</span>
-                                    <span className="value">{selectedTransaction.notes}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span className="label">Category:</span>
-                                    <span className="value">
-                                        <span className={`category-badge badge-${(selectedTransaction.category || '').toLowerCase()}`}>
-                                            {selectedTransaction.category}
-                                        </span>
-                                    </span>
-                                </div>
-                                <div className="detail-row">
-                                    <span className="label">Amount:</span>
-                                    <span className="value">₹{selectedTransaction.amountSpent}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span className="label">{selectedTransaction.transactionType === 'income' ? 'Received From:' : 'Paid To:'}</span>
-                                    <span className="value">{selectedTransaction.paidTo || 'Not specified'}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span className="label">Type:</span>
-                                    <span className="value">{selectedTransaction.transactionType || 'expense'}</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+            <TransactionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                transaction={selectedTransaction}
+                isEditing={isEditing}
+                editForm={editForm}
+                onEditChange={setEditForm}
+                onUpdate={handleUpdate}
+                expenseCategories={expenseCategories}
+                incomeCategories={incomeCategories}
+            />
 
-            <Fab 
-                color="primary" 
+            <Fab
+                color="primary"
                 aria-label="add"
                 onClick={() => {
                     window.dispatchEvent(new CustomEvent('sidebarTabChange', { detail: 'addTransaction' }));
@@ -279,7 +166,7 @@ export const Dashboard = () => {
                 }}
                 sx={{
                     position: 'fixed',
-                    bottom: 30,
+                    bottom: 55,
                     right: 30,
                     '&:hover': {
                         backgroundColor: '#2980b9'

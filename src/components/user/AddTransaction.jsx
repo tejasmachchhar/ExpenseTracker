@@ -1,71 +1,41 @@
-import { Label } from '@mui/icons-material'
-import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, TextField, MenuItem, Stack, Paper } from '@mui/material'
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs'
-import React, { useState, useMemo } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { addTransaction } from '../../store/slices/transactionSlice'
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTransaction } from '../../store/slices/transactionSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../../src/assets/css/components.css';
 
 export const AddTransaction = () => {
     const dispatch = useDispatch();
-    const [checked, setChecked] = useState(true);
-    const [transactionType, setTransactionType] = useState('expense');
-    const [selectedCategory, setSelectedCategory] = useState("1");
-    const { register, handleSubmit, control, setValue, reset } = useForm();
+    const { expenseCategories, incomeCategories } = useSelector((state) => state.categories);
+    const { userData } = useSelector((state) => state.transactions);
+    const [formData, setFormData] = useState({
+        tranType: 'expense',
+        amountSpent: '',
+        dateTime: new Date().toISOString().slice(0, 16),
+        paidTo: '',
+        account: '1',
+        category: '',
+        notes: '',
+        attachmentUrl: null
+    });
 
-    // Define categories with their styling information
-    const categories = useMemo(() => [
-        { value: "Grocery", label: "Grocery", pillClass: "pill-travel" },
-        { value: "Food & Drinks", label: "Food & Drinks", pillClass: "pill-food" },
-        { value: "Bills", label: "Bills", pillClass: "pill-office" },
-        { value: "Shopping", label: "Shopping", pillClass: "pill-other" },
-        { value: "Entertainment", label: "Entertainment", pillClass: "pill-travel" },
-        { value: "Health", label: "Health", pillClass: "pill-office" },
-        { value: "Travel", label: "Travel", pillClass: "pill-travel" },
-        { value: "Others", label: "Others", pillClass: "pill-other" }
-    ], []);
-
-    // Function to handle form cancellation
-    const handleCancel = () => {
-        // Reset form fields
-        reset();
-
-        // Reset all states to their default values
-        setChecked(true);
-        setTransactionType('expense');
-        setSelectedCategory("1");
-
-        // Reset file input if it exists
-        const fileInput = document.getElementById('expense-receipt');
-        if (fileInput) {
-            fileInput.value = '';
-        }
-
-        // Show feedback to user
-        toast.info('Form has been cleared');
-    };
-
-    // Function to handle category selection from pills
-    const handleCategoryPillClick = (category) => {
-        setSelectedCategory(category.value);
-        setValue("category", category.value); // Update the form value
-    };
-
-    const submitHandler = async (data) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const formData = new FormData();
-            for (const key in data) {
-                formData.append(key, data[key]);
-            }
-
             const resultAction = await dispatch(addTransaction(formData));
             if (addTransaction.fulfilled.match(resultAction)) {
                 toast.success('Transaction added successfully');
-                document.getElementById('expense-form').reset();
+                setFormData({
+                    tranType: 'expense',
+                    amountSpent: '',
+                    dateTime: new Date().toISOString().slice(0, 16),
+                    paidTo: '',
+                    account: '1',
+                    category: '',
+                    notes: '',
+                    attachmentUrl: null
+                });
             } else {
                 throw new Error(resultAction.error.message);
             }
@@ -73,253 +43,166 @@ export const AddTransaction = () => {
             console.error('Error adding transaction:', error);
             toast.error(error.message || 'Error adding transaction');
         }
-    }
+    };
 
     return (
-        <>
-            <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
-            <div className="main-content">
-                <div className="page-header">
+        <div className="main-content">
+            <div className="page-container">
+                <div className="dashboard-header">
                     <h1>Add New Transaction</h1>
                     <div className="user-profile">
-                        <span>Welcome, Tejas</span>
-                        <div className="user-avatar">TM</div>
+                        <span>Welcome, {userData?.firstName}</span>
+                        <div className="user-avatar">{`${userData?.firstName?.[0]}${userData?.lastName?.[0]}`}</div>
                     </div>
                 </div>
 
-                <Paper className="form-container" elevation={0}>
-                    <div className="form-header">
-                        <h2>Transaction Details</h2>
-                        <p>Complete the form below to add a new transaction record. All fields marked with an asterisk (*) are required.</p>
-                    </div>
-
-                    <form id="expense-form" onSubmit={handleSubmit(submitHandler)}>
-                        <Box sx={{ mb: 4 }}>
-                            <FormControl fullWidth>
-                                <FormLabel id="transaction-type-label" sx={{ mb: 2, color: '#475569', fontWeight: 500 }}>
-                                    Transaction Type
-                                </FormLabel>
-                                <Controller
-                                    name="tranType"
-                                    control={control}
-                                    defaultValue="expense"
-                                    render={({ field }) => (
-                                        <RadioGroup
-                                            {...field}
-                                            row
-                                            aria-labelledby="transaction-type-label"
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setTransactionType(e.target.value);
-                                                setValue("category", "1");
-                                            }}
-                                            sx={{ justifyContent: 'space-around' }}
-                                        >
-                                            <FormControlLabel
-                                                value="expense"
-                                                control={<Radio />}
-                                                label="Expense"
-                                                sx={{
-                                                    '& .MuiFormControlLabel-label': {
-                                                        color: '#475569',
-                                                        fontWeight: field.value === 'expense' ? 600 : 400
-                                                    }
-                                                }}
-                                            />
-                                            <FormControlLabel
-                                                value="income"
-                                                control={<Radio />}
-                                                label="Income"
-                                                sx={{
-                                                    '& .MuiFormControlLabel-label': {
-                                                        color: '#475569',
-                                                        fontWeight: field.value === 'income' ? 600 : 400
-                                                    }
-                                                }}
-                                            />
-                                        </RadioGroup>
-                                    )}
-                                />
-                            </FormControl>
-                        </Box>
-
-                        <div className="form-section">
-                            <Stack spacing={3}>
-                                <div className="form-group">
-                                    <label htmlFor="expense-amount">{transactionType === 'expense' ? 'Amount spent' : 'Amount credited'} *</label>
-                                    <div className="input-with-icon">
-                                        <div className="input-icon">₹</div>
-                                        <TextField
-                                            type="number"
-                                            id="expense-amount"
-                                            placeholder="0.00"
-                                            fullWidth
-                                            InputProps={{
-                                                inputProps: { min: 0 },
-                                                sx: { paddingLeft: '2.5rem' }
-                                            }}
-                                            required
-                                            {...register('amountSpent')}
-                                        />
-                                    </div>
+                <div className="form-container">
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>Transaction Type</label>
+                            <div className="radio-group">
+                                <div className="radio-item">
+                                    <input
+                                        type="radio"
+                                        id="expense"
+                                        name="tranType"
+                                        value="expense"
+                                        checked={formData.tranType === 'expense'}
+                                        onChange={(e) => setFormData({ ...formData, tranType: e.target.value })}
+                                    />
+                                    <label htmlFor="expense">Expense</label>
                                 </div>
-
-                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                    <div className="form-group" style={{ flex: 1 }}>
-                                        <label htmlFor="date-time">Date & Time</label>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DateTimePicker
-                                                defaultValue={dayjs()}
-                                                {...register("dateTime")}
-                                                sx={{
-                                                    width: '100%',
-                                                    '& .MuiOutlinedInput-root': {
-                                                        borderRadius: '0.5rem'
-                                                    }
-                                                }}
-                                            />
-                                        </LocalizationProvider>
-                                    </div>
-
-                                    <div className="form-group" style={{ flex: 1 }}>
-                                        <label htmlFor="party">
-                                            {transactionType === 'expense' ? 'Paid to' : 'Received from'} *
-                                        </label>
-                                        <TextField
-                                            id="party"
-                                            fullWidth
-                                            required
-                                            {...register("paidTo")}
-                                        />
-                                    </div>
-                                </Stack>
-
-                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                    <div className="form-group" style={{ flex: 1 }}>
-                                        <label htmlFor="account">Account *</label>
-                                        <TextField
-                                            select
-                                            id="account"
-                                            fullWidth
-                                            required
-                                            defaultValue="1"
-                                            {...register("account")}
-                                        >
-                                            <MenuItem value="1">Select Type</MenuItem>
-                                            <MenuItem value="Cash">Cash</MenuItem>
-                                            <MenuItem value="UPI">UPI</MenuItem>
-                                            <MenuItem value="Netbanking">Netbanking</MenuItem>
-                                            <MenuItem value="Cheque">Cheque</MenuItem>
-                                        </TextField>
-                                    </div>
-
-                                    <div className="form-group" style={{ flex: 1 }}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch
-                                                    checked={checked}
-                                                    onChange={(e) => setChecked(e.target.checked)}
-                                                />
-                                            }
-                                            label={checked ? "Transaction (un-tick if Transfer)" : "Transfer (tick if Transaction)"}
-                                        />
-                                    </div>
-                                </Stack>
-                            </Stack>
-                        </div>
-
-                        <div className="form-section">
-                            <div className="form-group">
-                                <label htmlFor="category">Category *</label>
-                                <Controller
-                                    name="category"
-                                    control={control}
-                                    defaultValue="1"
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            select
-                                            id="category"
-                                            fullWidth
-                                            required
-                                            value={selectedCategory}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setSelectedCategory(e.target.value);
-                                            }}
-                                        >
-                                            <MenuItem value="1">Select Category</MenuItem>
-                                            {categories.map((category) => (
-                                                <MenuItem key={category.value} value={category.value}>
-                                                    {category.label}
-                                                </MenuItem>
-                                            ))}
-                                        </TextField>
-                                    )}
-                                />
-                                <div className="category-pills">
-                                    {categories.map((category) => (
-                                        <div
-                                            key={category.value}
-                                            className={`category-pill ${category.pillClass} ${selectedCategory === category.value ? 'active' : ''
-                                                }`}
-                                            onClick={() => handleCategoryPillClick(category)}
-                                        >
-                                            {category.label}
-                                        </div>
-                                    ))}
+                                <div className="radio-item">
+                                    <input
+                                        type="radio"
+                                        id="income"
+                                        name="tranType"
+                                        value="income"
+                                        checked={formData.tranType === 'income'}
+                                        onChange={(e) => setFormData({ ...formData, tranType: e.target.value })}
+                                    />
+                                    <label htmlFor="income">Income</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="form-section">
-                            <Stack spacing={3}>
-                                <div className="form-group">
-                                    <label htmlFor="expense-description">Description *</label>
-                                    <TextField
-                                        id="expense-description"
-                                        multiline
-                                        rows={4}
-                                        placeholder="Provide details about this expense..."
-                                        fullWidth
-                                        required
-                                        {...register('notes')}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Upload Receipt</label>
-                                    <label htmlFor="expense-receipt" className="file-upload">
-                                        <i>📤</i>
-                                        <p>Drag & drop your receipt here, or click to browse</p>
-                                        <p><small>Supports JPG, PNG or PDF up to 10MB</small></p>
-                                        <input
-                                            type="file"
-                                            id="expense-receipt"
-                                            accept=".jpg, .jpeg, .png, .pdf"
-                                            {...register('attachmentUrl')}
-                                        />
-                                    </label>
-                                </div>
-                            </Stack>
+                        <div className="form-group">
+                            <label htmlFor="amountSpent">{formData.tranType === 'expense' ? 'Amount spent' : 'Amount credited'} *</label>
+                            <div className="input-with-icon">
+                                <span className="currency-symbol">₹</span>
+                                <input
+                                    type="number"
+                                    id="amountSpent"
+                                    className="form-control"
+                                    placeholder="0.00"
+                                    value={formData.amountSpent}
+                                    onChange={(e) => setFormData({ ...formData, amountSpent: e.target.value })}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="dateTime">Date & Time *</label>
+                            <input
+                                type="datetime-local"
+                                id="dateTime"
+                                className="form-control"
+                                value={formData.dateTime}
+                                onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="paidTo">{formData.tranType === 'expense' ? 'Paid to' : 'Received from'} *</label>
+                            <input
+                                type="text"
+                                id="paidTo"
+                                className="form-control"
+                                value={formData.paidTo}
+                                onChange={(e) => setFormData({ ...formData, paidTo: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="account">Payment Method *</label>
+                            <select
+                                id="account"
+                                className="form-control"
+                                value={formData.account}
+                                onChange={(e) => setFormData({ ...formData, account: e.target.value })}
+                                required
+                            >
+                                <option value="1">Select Method</option>
+                                <option value="Cash">Cash</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Netbanking">Netbanking</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Category *</label>
+                            <select
+                                className="form-control"
+                                value={formData.category}
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                required
+                            >
+                                <option value="">Select a category</option>
+                                <optgroup label="Expense Categories">
+                                    {expenseCategories.map((category) => (
+                                        <option key={category} value={category}>{category}</option>
+                                    ))}
+                                </optgroup>
+                                <optgroup label="Income Categories">
+                                    {incomeCategories.map((category) => (
+                                        <option key={category} value={category}>{category}</option>
+                                    ))}
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="notes">Description *</label>
+                            <textarea
+                                id="notes"
+                                className="form-control"
+                                rows="4"
+                                placeholder="Provide details about this transaction..."
+                                value={formData.notes}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Upload Receipt</label>
+                            <div className="file-upload">
+                                <input
+                                    type="file"
+                                    className="form-control"
+                                    accept=".jpg, .jpeg, .png, .pdf"
+                                    onChange={(e) => setFormData({ ...formData, attachmentUrl: e.target.files[0] })}
+                                />
+                                <p>Drag & drop your receipt here, or click to browse</p>
+                                <p><small>Supports JPG, PNG or PDF up to 10MB</small></p>
+                            </div>
                         </div>
 
                         <div className="form-actions">
-                            <button
-                                type="button"
-                                className="btn btn-outline"
-                                onClick={handleCancel}
-                            >
+                            <button type="button" className="btn btn-outline" onClick={() => setFormData({
+                                tranType: 'expense',
+                                amountSpent: '',
+                                dateTime: new Date().toISOString().slice(0, 16),
+                                paidTo: '',
+                                account: '1',
+                                category: '',
+                                notes: '',
+                                attachmentUrl: null
+                            })}>
                                 Cancel
                             </button>
                             <button type="submit" className="btn btn-primary">
@@ -327,8 +210,8 @@ export const AddTransaction = () => {
                             </button>
                         </div>
                     </form>
-                </Paper>
+                </div>
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
