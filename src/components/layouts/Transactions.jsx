@@ -11,6 +11,7 @@ export const Transactions = () => {
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [editForm, setEditForm] = useState({
         notes: '',
         category: '',
@@ -21,9 +22,16 @@ export const Transactions = () => {
     });
 
     // Function to fetch all data
-    const refreshData = () => {
-        dispatch(fetchTransactions());
-        dispatch(fetchDashboardData());
+    const refreshData = async () => {
+        setIsRefreshing(true);
+        try {
+            await dispatch(fetchTransactions()).unwrap();
+            await dispatch(fetchDashboardData()).unwrap();
+        } catch (error) {
+            toast.error('Failed to refresh data');
+        } finally {
+            setIsRefreshing(false);
+        }
     };
 
     useEffect(() => {
@@ -99,7 +107,26 @@ export const Transactions = () => {
             <div className="recent-transactions">
                 <div className="section-header">
                     <h2>Your Transactions</h2>
-                    <button onClick={refreshData} className="refresh-btn">↻ Refresh</button>
+                    <button 
+                        onClick={refreshData} 
+                        className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
+                        disabled={isRefreshing}
+                    >
+                        <svg 
+                            className="refresh-icon" 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 16 16"
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path 
+                                d="M13.65 2.35A7.958 7.958 0 0 0 8 0a8 8 0 1 0 8 8h-2a6 6 0 1 1-1.35-3.65l1 1V2.35z" 
+                                fill="currentColor"
+                            />
+                        </svg>
+                        {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                    </button>
                 </div>
                 <table className="transaction-table">
                     <thead>
@@ -123,10 +150,14 @@ export const Transactions = () => {
                                 <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy HH:mm')}</td>
                                 <td>{transaction.notes}</td>
                                 <td>
-                                    <span className={`category-badge badge-${(transaction.category || '').toLowerCase()}`}>
-                                        {transaction.category}
-                                    </span>
-                                </td>
+                                                <span className={`category-badge ${
+                                                    transaction.category 
+                                                        ? `badge-${transaction.category.toLowerCase().replace(/\s+/g, '')}` 
+                                                        : ''
+                                                }`}>
+                                                    {transaction.category || 'Uncategorized'}
+                                                </span>
+                                            </td>
                                 <td>₹{transaction.amountSpent}</td>
                                 <td>{transaction.paidTo || '-'}</td>
                                 <td>{transaction.transactionType || 'expense'}</td>
@@ -238,8 +269,12 @@ export const Transactions = () => {
                                 <div className="detail-row">
                                     <span className="label">Category:</span>
                                     <span className="value">
-                                        <span className={`category-badge badge-${(selectedTransaction.category || '').toLowerCase()}`}>
-                                            {selectedTransaction.category}
+                                        <span className={`category-badge ${
+                                            selectedTransaction.category 
+                                                ? `badge-${selectedTransaction.category.toLowerCase().replace(/\s+/g, '')}` 
+                                                : ''
+                                        }`}>
+                                            {selectedTransaction.category || 'Uncategorized'}
                                         </span>
                                     </span>
                                 </div>

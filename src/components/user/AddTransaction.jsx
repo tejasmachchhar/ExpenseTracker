@@ -15,7 +15,7 @@ export const AddTransaction = () => {
     const [checked, setChecked] = useState(true);
     const [transactionType, setTransactionType] = useState('expense');
     const [selectedCategory, setSelectedCategory] = useState("1");
-    const { register, handleSubmit, control, setValue } = useForm();
+    const { register, handleSubmit, control, setValue, reset } = useForm();
 
     // Define categories with their styling information
     const categories = useMemo(() => [
@@ -28,6 +28,26 @@ export const AddTransaction = () => {
         { value: "Travel", label: "Travel", pillClass: "pill-travel" },
         { value: "Others", label: "Others", pillClass: "pill-other" }
     ], []);
+
+    // Function to handle form cancellation
+    const handleCancel = () => {
+        // Reset form fields
+        reset();
+
+        // Reset all states to their default values
+        setChecked(true);
+        setTransactionType('expense');
+        setSelectedCategory("1");
+
+        // Reset file input if it exists
+        const fileInput = document.getElementById('expense-receipt');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+
+        // Show feedback to user
+        toast.info('Form has been cleared');
+    };
 
     // Function to handle category selection from pills
     const handleCategoryPillClick = (category) => {
@@ -77,50 +97,60 @@ export const AddTransaction = () => {
                         <div className="user-avatar">TM</div>
                     </div>
                 </div>
-                
+
                 <Paper className="form-container" elevation={0}>
                     <div className="form-header">
                         <h2>Transaction Details</h2>
                         <p>Complete the form below to add a new transaction record. All fields marked with an asterisk (*) are required.</p>
                     </div>
-                    
+
                     <form id="expense-form" onSubmit={handleSubmit(submitHandler)}>
                         <Box sx={{ mb: 4 }}>
                             <FormControl fullWidth>
                                 <FormLabel id="transaction-type-label" sx={{ mb: 2, color: '#475569', fontWeight: 500 }}>
                                     Transaction Type
                                 </FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="transaction-type-label"
-                                    value={transactionType}
-                                    onChange={(e) => setTransactionType(e.target.value)}
-                                    sx={{ justifyContent: 'space-around' }}
-                                    {...register("tranType")}
-                                >
-                                    <FormControlLabel 
-                                        value="expense" 
-                                        control={<Radio />} 
-                                        label="Expense"
-                                        sx={{ 
-                                            '& .MuiFormControlLabel-label': { 
-                                                color: '#475569',
-                                                fontWeight: transactionType === 'expense' ? 600 : 400
-                                            }
-                                        }}
-                                    />
-                                    <FormControlLabel 
-                                        value="income" 
-                                        control={<Radio />} 
-                                        label="Income"
-                                        sx={{ 
-                                            '& .MuiFormControlLabel-label': { 
-                                                color: '#475569',
-                                                fontWeight: transactionType === 'income' ? 600 : 400
-                                            }
-                                        }}
-                                    />
-                                </RadioGroup>
+                                <Controller
+                                    name="tranType"
+                                    control={control}
+                                    defaultValue="expense"
+                                    render={({ field }) => (
+                                        <RadioGroup
+                                            {...field}
+                                            row
+                                            aria-labelledby="transaction-type-label"
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setTransactionType(e.target.value);
+                                                setValue("category", "1");
+                                            }}
+                                            sx={{ justifyContent: 'space-around' }}
+                                        >
+                                            <FormControlLabel
+                                                value="expense"
+                                                control={<Radio />}
+                                                label="Expense"
+                                                sx={{
+                                                    '& .MuiFormControlLabel-label': {
+                                                        color: '#475569',
+                                                        fontWeight: field.value === 'expense' ? 600 : 400
+                                                    }
+                                                }}
+                                            />
+                                            <FormControlLabel
+                                                value="income"
+                                                control={<Radio />}
+                                                label="Income"
+                                                sx={{
+                                                    '& .MuiFormControlLabel-label': {
+                                                        color: '#475569',
+                                                        fontWeight: field.value === 'income' ? 600 : 400
+                                                    }
+                                                }}
+                                            />
+                                        </RadioGroup>
+                                    )}
+                                />
                             </FormControl>
                         </Box>
 
@@ -242,9 +272,8 @@ export const AddTransaction = () => {
                                     {categories.map((category) => (
                                         <div
                                             key={category.value}
-                                            className={`category-pill ${category.pillClass} ${
-                                                selectedCategory === category.value ? 'active' : ''
-                                            }`}
+                                            className={`category-pill ${category.pillClass} ${selectedCategory === category.value ? 'active' : ''
+                                                }`}
                                             onClick={() => handleCategoryPillClick(category)}
                                         >
                                             {category.label}
@@ -286,7 +315,11 @@ export const AddTransaction = () => {
                         </div>
 
                         <div className="form-actions">
-                            <button type="button" className="btn btn-outline">
+                            <button
+                                type="button"
+                                className="btn btn-outline"
+                                onClick={handleCancel}
+                            >
                                 Cancel
                             </button>
                             <button type="submit" className="btn btn-primary">

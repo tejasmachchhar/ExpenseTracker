@@ -145,8 +145,12 @@ export const Dashboard = () => {
                                             <td>{format(new Date(transaction.dateTime), 'MMM dd, yyyy HH:mm')}</td>
                                             <td>{transaction.notes}</td>
                                             <td>
-                                                <span className={`category-badge badge-${(transaction.category || '').toLowerCase()}`}>
-                                                    {transaction.category}
+                                                <span className={`category-badge ${
+                                                    transaction.category 
+                                                        ? `badge-${transaction.category.toLowerCase().replace(/\s+/g, '')}` 
+                                                        : ''
+                                                }`}>
+                                                    {transaction.category || 'Uncategorized'}
                                                 </span>
                                             </td>
                                             <td>₹{transaction.amountSpent}</td>

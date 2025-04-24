@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export const UserSidebar = () => {
   const [currentTab, setCurrentTab] = useState("dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
+    // Handle custom event for tab changes
     const handleTabChangeEvent = (e) => {
       setCurrentTab(e.detail);
     };
 
+    // Sync active tab with current URL path on mount and URL changes
+    const path = location.pathname;
+    if (path.includes('/user/dashboard')) {
+      setCurrentTab('dashboard');
+    } else if (path.includes('/user/addtransaction')) {
+      setCurrentTab('addTransaction');
+    } else if (path.includes('/user/transactions')) {
+      setCurrentTab('transactions');
+    } else if (path.includes('/user/reports')) {
+      setCurrentTab('reports');
+    }
+
     window.addEventListener('sidebarTabChange', handleTabChangeEvent);
     return () => window.removeEventListener('sidebarTabChange', handleTabChangeEvent);
-  }, []);
+  }, [location.pathname]); // Re-run when path changes
 
   const handleTabChange = (tab, path) => {
     setCurrentTab(tab);
@@ -45,7 +59,7 @@ export const UserSidebar = () => {
           </li>
           <li
             className={isActive("addTransaction")}
-            onClick={() => handleTabChange("addTransaction", "/user/addTransaction")}
+            onClick={() => handleTabChange("addTransaction", "/user/addtransaction")}
           >
             <i>➕</i> <span>Add Transaction</span>
           </li>
@@ -61,7 +75,7 @@ export const UserSidebar = () => {
           >
             <i>📝</i> <span>Reports</span>
           </li>
-          {/* <li
+{/* <li
             className={isActive("categories")}
             onClick={() => handleTabChange("categories")}
           >

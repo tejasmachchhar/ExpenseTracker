@@ -267,16 +267,87 @@
     font-weight: 600;
 }
 
-/* Category Badge in Modal */
-.transaction-details .category-badge {
+/* Category Badge Styles */
+.category-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 12px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 16px;
     font-size: 0.875rem;
     font-weight: 500;
-    background-color: #f1f5f9;
-    color: #475569;
+    background-color: #f1f5f9;  /* Default background */
+    color: #475569;  /* Default text color */
+}
+
+/* Specific category styles */
+.badge-grocery {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #2980b9;
+}
+
+.badge-food, .badge-food\&drinks {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+}
+
+.badge-bills {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.badge-shopping {
+    background-color: rgba(155, 89, 182, 0.15);
+    color: #8e44ad;
+}
+
+.badge-entertainment {
+    background-color: rgba(241, 196, 15, 0.15);
+    color: #d68910;
+}
+
+.badge-health {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+}
+
+.badge-travel {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #2980b9;
+}
+
+.badge-fuel {
+    background-color: rgba(243, 156, 18, 0.15);
+    color: #d35400;
+}
+
+.badge-emi {
+    background-color: rgba(142, 68, 173, 0.15);
+    color: #8e44ad;
+}
+
+.badge-rent {
+    background-color: rgba(41, 128, 185, 0.15);
+    color: #2980b9;
+}
+
+.badge-investment {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: #27ae60;
+}
+
+.badge-transfer {
+    background-color: rgba(127, 140, 141, 0.15);
+    color: #2c3e50;
+}
+
+.badge-salary {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.badge-others, .badge-other {
+    background-color: rgba(149, 165, 166, 0.15);
+    color: #576574;
 }
 
 /* Update Button */
@@ -590,4 +661,44 @@
   .btn {
     width: 100%;
   }
+}
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #3498db;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background: #2980b9;
+}
+
+.refresh-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+}
+
+.refresh-btn .refresh-icon {
+    transition: transform 0.2s ease;
+}
+
+.refresh-btn.refreshing .refresh-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
