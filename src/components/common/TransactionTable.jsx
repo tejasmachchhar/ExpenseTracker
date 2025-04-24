@@ -16,7 +16,7 @@ export const TransactionTable = ({
     onPageChange,
     showPagination = false,
 }) => {
-    console.log('TransactionTable',  transactions, isLoading, onView, onEdit, onDelete, showDelete, showPaidTo, showType, currentPage, totalPages, onPageChange, showPagination)
+    // console.log('TransactionTable',  transactions, isLoading, onView, onEdit, onDelete, showDelete, showPaidTo, showType, currentPage, totalPages, onPageChange, showPagination)
     return (
         <div className="transaction-table-container">
             <table className="transaction-table">
