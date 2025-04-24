@@ -12,6 +12,7 @@ import { Dashboard } from './components/layouts/Dashboard'
 import { Transactions } from './components/layouts/Transactions'
 import { Report } from './components/user/Report'
 import { ToastContainer } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {

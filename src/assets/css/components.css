@@ -107,7 +107,8 @@
     display: block;
     color: #2c3e50;
     margin-bottom: 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .form-control {
@@ -115,8 +116,17 @@
     padding: 0.75rem 1rem;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    height: auto;
+    min-height: 3.25rem;
     transition: border-color 0.2s;
+    background-color: #ffffff;
+    color: #2c3e50;
+}
+
+select.form-control {
+    appearance: auto;
+    padding-right: 2rem;
 }
 
 .form-control:focus {

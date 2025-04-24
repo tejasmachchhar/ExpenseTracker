@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, isValid } from 'date-fns';
-import './TransactionTable.css';
+import '../../assets/css/TransactionTable.css';
 
 export const TransactionTable = ({ 
     transactions, 

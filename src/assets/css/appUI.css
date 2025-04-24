@@ -28,11 +28,11 @@ body {
     .main-content {
         margin-left: 0;
         padding: 1rem;
-        padding-bottom: calc(65px + 1rem); /* Account for bottom navigation */
+        padding-bottom: calc(65px + 1rem); /* Account for bottom navigation */  
     }
 }
 
-/* Container for modals and overlays */
+
 #root {
     min-height: 100vh;
     position: relative;

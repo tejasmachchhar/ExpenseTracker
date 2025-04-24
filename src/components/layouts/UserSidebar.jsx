@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import './UserSidebar.css'
+import '../../assets/css/UserSidebar.css'
 
 export const UserSidebar = () => {
   const [currentTab, setCurrentTab] = useState("dashboard");

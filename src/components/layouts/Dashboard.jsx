@@ -8,8 +8,8 @@ import { Fab } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TransactionTable } from '../common/TransactionTable';
 import { TransactionModal } from '../common/TransactionModal';
-import '../../../src/assets/css/components.css';
-
+import '../../assets/css/components.css';
+import { ToastContainer } from 'react-toastify';
 
 export const Dashboard = () => {
     const { expenseCategories, incomeCategories } = useSelector((state) => state.categories);
@@ -83,6 +83,7 @@ export const Dashboard = () => {
 
     return (
         <>
+            <ToastContainer position="top-right" autoClose={3000} />
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>Expense Dashboard</title>

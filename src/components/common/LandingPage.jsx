@@ -1,5 +1,6 @@
 import React from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
+// Since bootstrap is available in assets/css, we can use that instead of the commented out one
+import "../../assets/css/bootstrap.min.css";
 import "../../assets/landingPage.css";
 import "../../assets/landing/css/style.css";
 import "../../assets/landing/css/responsive.css";

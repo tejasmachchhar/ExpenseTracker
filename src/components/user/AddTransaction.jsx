@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/slices/transactionSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../../src/assets/css/components.css';
+import '../../assets/css/components.css';
+import '../../assets/css/AddTransaction.css';
+import { ToastContainer } from 'react-toastify';
+
 
 export const AddTransaction = () => {
     const dispatch = useDispatch();
@@ -47,6 +50,7 @@ export const AddTransaction = () => {
 
     return (
         <div className="main-content">
+            <ToastContainer position="top-right" autoClose={3000} />
             <div className="page-container">
                 <div className="dashboard-header">
                     <h1>Add New Transaction</h1>

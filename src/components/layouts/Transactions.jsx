@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Transactions.css';
+import '../../assets/css/Transactions.css';
 import { toast, ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransactions, deleteTransaction, updateTransaction, fetchDashboardData } from '../../store/slices/transactionSlice';
@@ -7,7 +7,7 @@ import { TransactionTable } from '../common/TransactionTable';
 import { TransactionModal } from '../common/TransactionModal';
 import { format } from 'date-fns';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../../src/assets/css/components.css';
+import '../../assets/css/components.css';
 
 export const Transactions = () => {
     const dispatch = useDispatch();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import './TransactionModal.css';
+import '../../assets/css/TransactionModal.css';
 
 export const TransactionModal = ({
     isOpen,
