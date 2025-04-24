@@ -8,8 +8,12 @@ import { Fab } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TransactionTable } from '../common/TransactionTable';
 import { TransactionModal } from '../common/TransactionModal';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import '../../assets/css/components.css';
 import { ToastContainer } from 'react-toastify';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Dashboard = () => {
     const { expenseCategories, incomeCategories } = useSelector((state) => state.categories);
@@ -81,6 +85,55 @@ export const Dashboard = () => {
     // Get last 10 transactions
     const recentTransactions = transactions?.data?.slice(0, 10) || [];
 
+    const getChartData = () => {
+        const categories = dashboardData.expense?.categories || [];
+        return {
+            labels: categories.map(cat => cat.categoryName),
+            datasets: [{
+                data: categories.map(cat => cat.total),
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                    '#E7E9ED',
+                    '#2ecc71',
+                    '#e74c3c',
+                    '#3498db',
+                    '#f1c40f'
+                ],
+                borderWidth: 1
+            }]
+        };
+    };
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 15,
+                    padding: 15,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'Expenses by Category',
+                font: {
+                    size: 16,
+                    weight: 'bold'
+                }
+            }
+        }
+    };
+
     return (
         <>
             <ToastContainer position="top-right" autoClose={3000} />
@@ -141,6 +194,11 @@ export const Dashboard = () => {
                                 onEdit={handleEdit}
                                 showDelete={false}
                             />
+                        </div>
+                        <div className="chart-section">
+                            <div className="chart-container">
+                                <Pie data={getChartData()} options={chartOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>

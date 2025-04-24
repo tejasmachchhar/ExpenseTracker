@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { toast, ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
@@ -109,19 +109,58 @@ export const Report = () => {
         }
     };
 
+    const getCategoryPieData = () => {
+        const categories = dashboardData.expense?.categories || [];
+        return {
+            labels: categories.map(cat => cat.categoryName),
+            datasets: [{
+                data: categories.map(cat => cat.total),
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                    '#E7E9ED',
+                    '#2ecc71',
+                    '#e74c3c',
+                    '#3498db',
+                    '#f1c40f'
+                ],
+                borderWidth: 1
+            }]
+        };
+    };
+
+    const pieChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 15,
+                    padding: 15,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'Expenses by Category',
+                font: {
+                    size: 16,
+                    weight: 'bold'
+                }
+            }
+        }
+    };
+
     return (
         <div className="main-content">
-            <ToastContainer 
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
+            <ToastContainer position="top-right" autoClose={3000} />
             <div className="page-container">
                 <div className="dashboard-header">
                     <h1>Expense Report</h1>
@@ -152,6 +191,12 @@ export const Report = () => {
                             <p>₹{dashboardData.income?.monthlyAverage?.toFixed(2) || '0.00'}</p>
                         </div>
                         <div className="stat-icon icon-average">A</div>
+                    </div>
+                </div>
+
+                <div className="chart-section mt-4">
+                    <div className="chart-container" style={{ height: '400px' }}>
+                        <Pie data={getCategoryPieData()} options={pieChartOptions} />
                     </div>
                 </div>
 
