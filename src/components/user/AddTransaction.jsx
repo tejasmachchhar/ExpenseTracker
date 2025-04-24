@@ -1,10 +1,10 @@
 import { Label } from '@mui/icons-material'
-import { FormControl, FormControlLabel, FormLabel, Input, Radio, RadioGroup, Switch } from '@mui/material'
-import { DateTimePicker, LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers'
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, TextField, MenuItem, Stack, Paper } from '@mui/material'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useState, useMemo } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { addTransaction } from '../../store/slices/transactionSlice'
 import { toast, ToastContainer } from 'react-toastify'
@@ -14,8 +14,26 @@ export const AddTransaction = () => {
     const dispatch = useDispatch();
     const [checked, setChecked] = useState(true);
     const [transactionType, setTransactionType] = useState('expense');
-    const [category, setCategory] = useState("");
-    const { register, handleSubmit } = useForm();
+    const [selectedCategory, setSelectedCategory] = useState("1");
+    const { register, handleSubmit, control, setValue } = useForm();
+
+    // Define categories with their styling information
+    const categories = useMemo(() => [
+        { value: "Grocery", label: "Grocery", pillClass: "pill-travel" },
+        { value: "Food & Drinks", label: "Food & Drinks", pillClass: "pill-food" },
+        { value: "Bills", label: "Bills", pillClass: "pill-office" },
+        { value: "Shopping", label: "Shopping", pillClass: "pill-other" },
+        { value: "Entertainment", label: "Entertainment", pillClass: "pill-travel" },
+        { value: "Health", label: "Health", pillClass: "pill-office" },
+        { value: "Travel", label: "Travel", pillClass: "pill-travel" },
+        { value: "Others", label: "Others", pillClass: "pill-other" }
+    ], []);
+
+    // Function to handle category selection from pills
+    const handleCategoryPillClick = (category) => {
+        setSelectedCategory(category.value);
+        setValue("category", category.value); // Update the form value
+    };
 
     const submitHandler = async (data) => {
         try {
@@ -54,174 +72,229 @@ export const AddTransaction = () => {
             <div className="main-content">
                 <div className="page-header">
                     <h1>Add New Transaction</h1>
-                    <div className="user-profile"><span>Welcome,
-                        Tejas</span>
+                    <div className="user-profile">
+                        <span>Welcome, Tejas</span>
                         <div className="user-avatar">TM</div>
                     </div>
                 </div>
-                <div className="form-container">
+                
+                <Paper className="form-container" elevation={0}>
                     <div className="form-header">
                         <h2>Transaction Details</h2>
-                        <p>Complete the form below to add a new transaction record. All fields marked with an asterisk (*) are
-                            required.</p>
+                        <p>Complete the form below to add a new transaction record. All fields marked with an asterisk (*) are required.</p>
                     </div>
-                    <form id="expense-form" style={{ width: '-webkit-fill-available' }}
-                        onSubmit={handleSubmit(submitHandler)}>
-                        <FormControl style={{ textAlign: 'center', width: '-webkit-fill-available' }}>
-                            <FormLabel id="demo-radio-buttons-group-label">Transaction Type</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                value={transactionType}
-                                name="radio-buttons-group"
-                                onChange={(e) => {
-                                    const selectedValue = e.target.value;
-                                    setTransactionType(selectedValue);
-                                    console.log("Selected Transaction Type:", selectedValue);
-                                }}
-                                style={{ display: 'flex', justifyContent: 'space-around' }}
-                                {...register("tranType", {
-                                    onChange: (e) => {
-                                        setTransactionType(e.target.value);
-                                    },
-                                })}
-                            >
-                                <FormControlLabel value="expense" control={<Radio />} label="Expense" />
-                                <FormControlLabel value="income" control={<Radio />} label="Income" />
-                            </RadioGroup>
-                        </FormControl>
+                    
+                    <form id="expense-form" onSubmit={handleSubmit(submitHandler)}>
+                        <Box sx={{ mb: 4 }}>
+                            <FormControl fullWidth>
+                                <FormLabel id="transaction-type-label" sx={{ mb: 2, color: '#475569', fontWeight: 500 }}>
+                                    Transaction Type
+                                </FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="transaction-type-label"
+                                    value={transactionType}
+                                    onChange={(e) => setTransactionType(e.target.value)}
+                                    sx={{ justifyContent: 'space-around' }}
+                                    {...register("tranType")}
+                                >
+                                    <FormControlLabel 
+                                        value="expense" 
+                                        control={<Radio />} 
+                                        label="Expense"
+                                        sx={{ 
+                                            '& .MuiFormControlLabel-label': { 
+                                                color: '#475569',
+                                                fontWeight: transactionType === 'expense' ? 600 : 400
+                                            }
+                                        }}
+                                    />
+                                    <FormControlLabel 
+                                        value="income" 
+                                        control={<Radio />} 
+                                        label="Income"
+                                        sx={{ 
+                                            '& .MuiFormControlLabel-label': { 
+                                                color: '#475569',
+                                                fontWeight: transactionType === 'income' ? 600 : 400
+                                            }
+                                        }}
+                                    />
+                                </RadioGroup>
+                            </FormControl>
+                        </Box>
+
                         <div className="form-section">
-                            <h3 className="form-section-title"></h3>
-                            <div className="form-row"
-                                style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}
-                            >
+                            <Stack spacing={3}>
                                 <div className="form-group">
                                     <label htmlFor="expense-amount">{transactionType === 'expense' ? 'Amount spent' : 'Amount credited'} *</label>
                                     <div className="input-with-icon">
                                         <div className="input-icon">₹</div>
-                                        <input type="number" id="expense-amount" className="form-control"
-                                            placeholder={0.00} min={0} required
-                                            {...register('amountSpent')} />
+                                        <TextField
+                                            type="number"
+                                            id="expense-amount"
+                                            placeholder="0.00"
+                                            fullWidth
+                                            InputProps={{
+                                                inputProps: { min: 0 },
+                                                sx: { paddingLeft: '2.5rem' }
+                                            }}
+                                            required
+                                            {...register('amountSpent')}
+                                        />
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label htmlFor="party" className='form-label'>Date & Time
-                                    </label>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <MobileDateTimePicker
-                                            onChange={(newValue) => {
-                                                console.log(newValue);
-                                            }}
-                                            {...register("dateTime")}
-                                            // label="Date & Time"
-                                            defaultValue={dayjs()}
-                                            views={['day', 'month', 'year', 'hours', 'minutes', 'seconds']}
+                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                    <div className="form-group" style={{ flex: 1 }}>
+                                        <label htmlFor="date-time">Date & Time</label>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DateTimePicker
+                                                defaultValue={dayjs()}
+                                                {...register("dateTime")}
+                                                sx={{
+                                                    width: '100%',
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: '0.5rem'
+                                                    }
+                                                }}
+                                            />
+                                        </LocalizationProvider>
+                                    </div>
 
+                                    <div className="form-group" style={{ flex: 1 }}>
+                                        <label htmlFor="party">
+                                            {transactionType === 'expense' ? 'Paid to' : 'Received from'} *
+                                        </label>
+                                        <TextField
+                                            id="party"
+                                            fullWidth
+                                            required
+                                            {...register("paidTo")}
                                         />
-                                    </LocalizationProvider>
-                                </div>
+                                    </div>
+                                </Stack>
 
-                                <div className="form-group">
-                                    <label htmlFor="party" className='form-label'>
-                                        {transactionType === 'expense' ? 'Paid to' : 'Received from'} *
-                                    </label>
-                                    <input type="text" id='party' className='form-control' required
-                                        {...register("paidTo")}
-                                    />
-                                </div>
-                            </div>
+                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                    <div className="form-group" style={{ flex: 1 }}>
+                                        <label htmlFor="account">Account *</label>
+                                        <TextField
+                                            select
+                                            id="account"
+                                            fullWidth
+                                            required
+                                            defaultValue="1"
+                                            {...register("account")}
+                                        >
+                                            <MenuItem value="1">Select Type</MenuItem>
+                                            <MenuItem value="Cash">Cash</MenuItem>
+                                            <MenuItem value="UPI">UPI</MenuItem>
+                                            <MenuItem value="Netbanking">Netbanking</MenuItem>
+                                            <MenuItem value="Cheque">Cheque</MenuItem>
+                                        </TextField>
+                                    </div>
+
+                                    <div className="form-group" style={{ flex: 1 }}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={checked}
+                                                    onChange={(e) => setChecked(e.target.checked)}
+                                                />
+                                            }
+                                            label={checked ? "Transaction (un-tick if Transfer)" : "Transfer (tick if Transaction)"}
+                                        />
+                                    </div>
+                                </Stack>
+                            </Stack>
                         </div>
 
                         <div className="form-section">
-                            <h3 className="form-section-title"></h3>
-                            <div className="form-row">
-                                <div className='form-group'>
-                                    <label htmlFor="type" className='form-label'>
-                                        Account *
-                                    </label>
-                                    <select
-                                        {...register("account")}
-                                        className='form-control' id='type' required>
-                                        <option value='1'>Select Type</option>
-                                        <option value='Cash'>Cash</option>
-                                        <option value='UPI'>UPI</option>
-                                        <option value='Netbanking'>Netbanking</option>
-                                        <option value='Cheque'>Cheque</option>
-                                    </select>
-                                </div>
-                                <div className='form-group'>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                // {...register("isTransfer")}
-                                                checked={checked}
-                                                onChange={(e) => setChecked(e.target.checked)} />}
-                                        label={checked ? "Transaction (un-tick if Transfer)" : "Transfer (tick if Transaction)"}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="form-section">
-                            <h3 className="form-section-title"></h3>
                             <div className="form-group">
-                                <label htmlFor="category">Expense Category *</label>
-                                <select id="category" className="form-control" required
-                                    {...register("category")}>
-                                    <option value='1'>Select Category</option>
-                                    <option value='Grocery'>Grocery</option>
-                                    <option value='Shopping'>Shopping</option>
-                                    <option value='Food & Drinks'>Food &amp; Drinks</option>
-                                    <option value='Fuel'>Fuel</option>
-                                    <option value='Bills'>Bills</option>
-                                    <option value='EMI'>EMI</option>
-                                    <option value='Entertainment'>Entertainment</option>
-                                    <option value='Health'>Health</option>
-                                    <option value='Rent'>Rent</option>
-                                    <option value='Investment'>Investment</option>
-                                    <option value='Transfer'>Transfer</option>
-                                    <option value='Travel'>Travel</option>
-                                    <option value='Salary'>Salary</option>
-                                    <option value='Others'>Others</option>
-                                </select>
+                                <label htmlFor="category">Category *</label>
+                                <Controller
+                                    name="category"
+                                    control={control}
+                                    defaultValue="1"
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            select
+                                            id="category"
+                                            fullWidth
+                                            required
+                                            value={selectedCategory}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                setSelectedCategory(e.target.value);
+                                            }}
+                                        >
+                                            <MenuItem value="1">Select Category</MenuItem>
+                                            {categories.map((category) => (
+                                                <MenuItem key={category.value} value={category.value}>
+                                                    {category.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    )}
+                                />
                                 <div className="category-pills">
-                                    <div className="category-pill pill-travel">Grocery</div>
-                                    <div className="category-pill pill-food active">Food &amp; Dining</div>
-                                    <div className="category-pill pill-office">Bills</div>
-                                    <div className="category-pill pill-other">Other</div>
+                                    {categories.map((category) => (
+                                        <div
+                                            key={category.value}
+                                            className={`category-pill ${category.pillClass} ${
+                                                selectedCategory === category.value ? 'active' : ''
+                                            }`}
+                                            onClick={() => handleCategoryPillClick(category)}
+                                        >
+                                            {category.label}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
 
                         <div className="form-section">
-                            <h3 className="form-section-title"></h3>
-                            <div className="form-group">
-                                <label htmlFor="expense-description">Description *</label>
-                                <textarea id="expense-description" className="form-control" rows={4} placeholder="Provide details about this expense..." required defaultValue={""}
-                                    {...register('notes')} />
-                            </div>
-                            <div className="form-group"><label>Upload Receipt</label><label htmlFor="expense-receipt" className="file-upload"><i>📤</i>
-                                <p>Drag &amp; drop your receipt here,
-                                    or click to browse</p>
-                                <p><small>Supports JPG,
-                                    PNG or PDF up to 10MB</small></p>
-                                <input type="file" id="expense-receipt" accept=".jpg, .jpeg, .png, .pdf" {...register('attachmentUrl')} />
-                            </label></div>
+                            <Stack spacing={3}>
+                                <div className="form-group">
+                                    <label htmlFor="expense-description">Description *</label>
+                                    <TextField
+                                        id="expense-description"
+                                        multiline
+                                        rows={4}
+                                        placeholder="Provide details about this expense..."
+                                        fullWidth
+                                        required
+                                        {...register('notes')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Upload Receipt</label>
+                                    <label htmlFor="expense-receipt" className="file-upload">
+                                        <i>📤</i>
+                                        <p>Drag & drop your receipt here, or click to browse</p>
+                                        <p><small>Supports JPG, PNG or PDF up to 10MB</small></p>
+                                        <input
+                                            type="file"
+                                            id="expense-receipt"
+                                            accept=".jpg, .jpeg, .png, .pdf"
+                                            {...register('attachmentUrl')}
+                                        />
+                                    </label>
+                                </div>
+                            </Stack>
                         </div>
+
                         <div className="form-actions">
-                            <div className="action-group">
-                                <button type="button" className="btn btn-outline">Cancel</button>
-                            </div>
-                            <div className="action-group">
-                                <button type="button" className="btn btn-outline">Save as
-                                    Draft</button>
-                                <button type="submit" className="btn btn-primary">Submit Transation</button>
-                            </div>
+                            <button type="button" className="btn btn-outline">
+                                Cancel
+                            </button>
+                            <button type="submit" className="btn btn-primary">
+                                Submit Transaction
+                            </button>
                         </div>
                     </form>
-                </div>
+                </Paper>
             </div>
         </>
     )
