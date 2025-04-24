@@ -42,6 +42,30 @@ export const fetchDashboardData = createAsyncThunk(
   }
 );
 
+export const deleteTransaction = createAsyncThunk(
+  'transactions/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/expense/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateTransaction = createAsyncThunk(
+  'transactions/update',
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/expense/${id}`, formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   transactions: [],
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
@@ -102,6 +126,19 @@ const transactionSlice = createSlice({
       .addCase(fetchDashboardData.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
+      })
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
+        state.transactions.data = state.transactions.data.filter(
+          transaction => transaction._id !== action.payload
+        );
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        const index = state.transactions.data.findIndex(
+          transaction => transaction._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.transactions.data[index] = action.payload;
+        }
       });
   },
 });
